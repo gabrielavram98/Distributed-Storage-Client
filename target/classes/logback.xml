@@ -1,0 +1,73 @@
+<configuration>
+    <appender name="TRACE" class="ch.qos.logback.core.FileAppender">
+
+
+        <file>logs/trace.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+
+            <fileNamePattern>logs/trace-%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+
+
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %p [%t] %m%n</pattern>
+        </encoder>
+        <threshold level="TRACE" />
+    </appender>
+    <appender name="DEBUG" class="ch.qos.logback.core.FileAppender">
+        <file>logs/debug.log</file> <!-- Specify the path and name of the log file -->
+        <encoder>
+            <pattern>%d %p [%t] %m%n</pattern>
+        </encoder>
+        <threshold level="DEBUG" />
+
+    </appender>
+    <appender name="INFO" class="ch.qos.logback.core.FileAppender">
+        <file>logs/info.log</file> <!-- Specify the path and name of the log file -->
+        <encoder>
+            <pattern>%d %p [%t] %m%n</pattern>
+        </encoder>
+        <threshold level="INFO" />
+
+    </appender>
+    <appender name="WARN" class="ch.qos.logback.core.FileAppender">
+        <file>logs/warn.log</file> <!-- Specify the path and name of the log file -->
+        <encoder>
+            <pattern>%d %p [%t] %m%n</pattern>
+        </encoder>
+        <threshold level="WARN" />
+
+    </appender>
+    <appender name="ERROR" class="ch.qos.logback.core.FileAppender">
+        <file>logs/error.log</file> <!-- Specify the path and name of the log file -->
+        <encoder>
+            <pattern>%d %p [%t] %m%n</pattern>
+        </encoder>
+        <threshold level="ERROR" />
+
+    </appender>
+    <appender name="Root" class="ch.qos.logback.core.FileAppender">
+        <file>logs/root.log</file> <!-- Specify the path and name of the log file -->
+        <encoder>
+            <pattern>%d %p [%t] %m%n</pattern>
+        </encoder>
+        <threshold level="ERROR" />
+
+    </appender>
+
+    <logger name="proiectdiz.Log.Log" level="ERROR" additivity="false">
+        <appender-ref ref="ERROR" />
+        <appender-ref ref="WARN" />
+        <appender-ref ref="INFO" />
+        <appender-ref ref="DEBUG" />
+        <appender-ref ref="TRACE" />
+    </logger>
+
+
+
+    <root level="info">
+        <appender-ref ref="Root" />
+    </root>
+</configuration>

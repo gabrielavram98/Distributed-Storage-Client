@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "Action": {
+      "type": "string",
+      "enum": ["Store","Get"]
+    },
+    "Data": {
+      "type": "object",
+      "properties": {
+        "DataType": {
+          "type": "string",
+          "enum": ["RSA_Key_Pair"]
+        },
+        "DataContent": {
+          "type": "string"
+        }
+      },
+      "required": ["DataType", "DataContent"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["Action", "Data"],
+  "additionalProperties": false
+}
