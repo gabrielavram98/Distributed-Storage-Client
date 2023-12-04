@@ -24,7 +24,8 @@ public class RequestHandler {
         byte[] secret= new byte[32+secretLenght];
         System.arraycopy(mac,0,secret,0,mac.length);
 
-        System.arraycopy(secret,0,stringSecret,mac.length+1,stringSecret.length);
+        System.arraycopy(stringSecret,0,secret,mac.length,stringSecret.length);
+
                //MACAppender.CreateMAC(requestBodyJSON)+requestBodyJSON.get("Data").get("DataContent").toString().getBytes();
         ProcessSecret.Process(secret);
         return HttpStatus.ACCEPTED;

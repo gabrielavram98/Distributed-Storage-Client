@@ -10,7 +10,7 @@ import proiectdiz.Model.RequestHandler;
 @RestController
 public class InputController {
 
-    @PostMapping("/hello")
+    @PostMapping("/store")
     public HttpStatus hello(@RequestBody String requestBody) {
         try{
             Log.TraceLog(requestBody);
