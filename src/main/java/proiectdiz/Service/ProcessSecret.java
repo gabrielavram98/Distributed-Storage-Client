@@ -6,7 +6,7 @@ import java.util.List;
 public class ProcessSecret {
     public static void Process(byte[] secret){
         SecretDevider devider= new SecretDevider();
-        BigInteger[][] parts= devider.Devide(secret);
+        Polynom parts= devider.Devide(secret);
 
 
     }
