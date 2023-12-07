@@ -14,7 +14,7 @@ public class Polynom {
 
     private final BigInteger[] x;
     private final BigInteger[] y;
-    private final BigInteger secret;
+    private BigInteger secret;
     int bitlength;
 
     public Polynom(BigInteger[] coeficients, BigInteger p, int n, int k ,BigInteger secret,int bitlen){
@@ -46,10 +46,12 @@ public class Polynom {
             }
         }
     }
+
     public void generateX(){
         for(int i=0;i<n;i++){
 
-            x[i] =  new BigInteger(bitlength, new Random()).mod(p);
+            //x[i] =  new BigInteger(bitlength, new Random()).mod(p);
+            x[i] =  new BigInteger(bitlength, new Random());
         }
     }
 
@@ -58,13 +60,22 @@ public class Polynom {
             y[i]=new BigInteger("0");
             for (int j=k-1;j>0;j--) {
 
-                BigInteger rez= x[i].modPow(new BigInteger(String.valueOf(j)), p);
+
+                //BigInteger rez= x[i].modPow(new BigInteger(String.valueOf(j)), p);
+                BigInteger rez= x[i].pow(j);
+                //rez=rez.multiply(signedCoefficients[j-1]).mod(p);
                 rez=rez.multiply(signedCoefficients[j-1]);
-                rez=rez.mod(p);
+               ///////// rez=rez.mod(p);
+                //y[i] = y[i].add(rez).mod(p);
                 y[i] = y[i].add(rez);
-                y[i]=y[i].mod(p);
-            }//TODO:WHAT THE FUCK
-            y[i]=y[i].add(secret.multiply(new BigInteger(String.valueOf(sign[0]))));
+
+            }
+            secret= new BigInteger(String.valueOf("1634"));
+            //secret=secret.multiply(new BigInteger(String.valueOf(sign[0]))).mod(p);
+            secret=secret.multiply(new BigInteger(String.valueOf(sign[0])));
+            //y[i]=y[i].add(secret).mod(p);
+            y[i]=y[i].add(secret);
+
 
         }
     }
@@ -80,5 +91,8 @@ public class Polynom {
 
     public BigInteger[] getY() {
         return y;
+    }
+    public BigInteger getP(){
+        return  p;
     }
 }

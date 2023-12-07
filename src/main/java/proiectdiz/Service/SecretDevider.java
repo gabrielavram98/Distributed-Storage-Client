@@ -14,7 +14,7 @@ public class SecretDevider {
     public  Polynom Devide(byte[] secret){
         Properties properties= new Properties();
         int n=4;
-        int k=3;
+        int k=2;
         List<BigInteger> parts = new ArrayList<BigInteger>();
         BigInteger BigIntegerSecret= new BigInteger(secret);
         /*
@@ -24,12 +24,12 @@ public class SecretDevider {
         // int n=properties.getN();
         */
 
-        BigInteger p=BitOperator.generatePrimeP(4096);
-        BigInteger[] coeficients=BitOperator.generateCoeficientsModP(p,k,4000);
+        BigInteger p=BitOperator.generatePrimeP(7);
+        BigInteger[] coeficients=BitOperator.generateCoeficientsModP(p,k,5);
 
         System.out.println(p.toString());
 
-        return pointGenerator(coeficients,n,k,p,4000, BigIntegerSecret);
+        return pointGenerator(coeficients,n,k,p,5, BigIntegerSecret);
 
     }
 

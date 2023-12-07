@@ -1,0 +1,38 @@
+package proiectdiz.Service;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
+import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
+import org.apache.commons.math3.analysis.solvers.PolynomialSolver;
+import java.math.BigInteger;
+
+public class Lagrange {
+    private BigInteger[] x;
+    private BigInteger[] y;
+    BigInteger p;
+
+    public Lagrange(BigInteger[] x, BigInteger[] y, BigInteger p){
+        this.x=x;
+        this.y=y;
+        this.p=p;
+
+    }
+
+    public BigInteger lagrangeInterpolation() {
+        int k = x.length;
+        Fraction ans= new Fraction(new BigInteger("0"),new BigInteger("1"));
+
+        for (int i = 0; i < k; ++i) {
+
+            Fraction L= new Fraction(y[i],new BigInteger("1"));
+            for (int j = 0; j < k; ++j) {
+                if (j != i) {
+                        Fraction temp= new Fraction(x[j].multiply(new BigInteger("-1")),x[i].subtract(x[j]));
+                        L.MultiplyOp(temp);
+
+                }
+            }
+            ans.Add(L);
+        }
+
+        return ans.getNuminator();
+    }
+}
