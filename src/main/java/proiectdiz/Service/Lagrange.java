@@ -7,19 +7,22 @@ import java.math.BigInteger;
 public class Lagrange {
     private BigInteger[] x;
     private BigInteger[] y;
+    private int k;
     BigInteger p;
 
-    public Lagrange(BigInteger[] x, BigInteger[] y, BigInteger p){
+    public Lagrange(BigInteger[] x, BigInteger[] y, BigInteger p, int k){
         this.x=x;
         //this.x = new BigInteger[]{BigInteger.valueOf(20), BigInteger.valueOf(23), BigInteger.valueOf(21),BigInteger.valueOf(13)};
         //this.y = new BigInteger[]{BigInteger.valueOf(1554), BigInteger.valueOf(1542), BigInteger.valueOf(1510),BigInteger.valueOf(1582)};
+        //SECRET IS 1634
         this.y=y;
         this.p=p;
+        this.k=k;
 
     }
 
     public BigInteger lagrangeInterpolation() {
-        int k = 3;
+
         Fraction ans= new Fraction(new BigInteger("0"),new BigInteger("1"));
 
         for (int i = 0; i < k; i++) {

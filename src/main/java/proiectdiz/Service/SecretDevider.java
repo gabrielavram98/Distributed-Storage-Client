@@ -13,8 +13,8 @@ public class SecretDevider {
 
     public  Polynom Devide(byte[] secret){
         Properties properties= new Properties();
-        int n=4;
-        int k=2;
+        int n=7;
+        int k=5;
         List<BigInteger> parts = new ArrayList<BigInteger>();
         BigInteger BigIntegerSecret= new BigInteger(secret);
         /*
@@ -29,7 +29,7 @@ public class SecretDevider {
 
         System.out.println(p.toString());
 
-        return pointGenerator(coeficients,n,k,p,5, BigIntegerSecret);
+        return pointGenerator(coeficients,n,k,p,256, BigIntegerSecret);
 
     }
 
