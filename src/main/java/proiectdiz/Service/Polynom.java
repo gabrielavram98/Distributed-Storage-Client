@@ -70,9 +70,9 @@ public class Polynom {
                 y[i] = y[i].add(rez);
 
             }
-            secret= new BigInteger(String.valueOf("1634"));
+            secret= new BigInteger(String.valueOf("1241248"));
             //secret=secret.multiply(new BigInteger(String.valueOf(sign[0]))).mod(p);
-            secret=secret.multiply(new BigInteger(String.valueOf(sign[0])));
+            //secret=secret.multiply(new BigInteger(String.valueOf(sign[0])));
             //y[i]=y[i].add(secret).mod(p);
             y[i]=y[i].add(secret);
 

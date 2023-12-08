@@ -30,13 +30,16 @@ public class Fraction {
 
     public void reduceFraction(Fraction fraction){
         BigInteger gcd=fraction.getNuminator().gcd(fraction.getDenuminator());
+
         fraction.setNuminator(fraction.getNuminator().divide(gcd));
         fraction.setDenuminator(fraction.getDenuminator().divide(gcd));
     }
-    public Fraction MultiplyOp(Fraction f){
+    public void MultiplyOp(Fraction f){
         Fraction temp= new Fraction(numinator.multiply(f.getNuminator()),denuminator.multiply(f.getDenuminator()));
         temp.reduceFraction(temp);
-        return temp;
+        this.setDenuminator(temp.getDenuminator());
+        this.setNuminator(temp.getNuminator());
+
 
     }
     public void Add(Fraction f){

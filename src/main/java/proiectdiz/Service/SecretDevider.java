@@ -24,8 +24,8 @@ public class SecretDevider {
         // int n=properties.getN();
         */
 
-        BigInteger p=BitOperator.generatePrimeP(7);
-        BigInteger[] coeficients=BitOperator.generateCoeficientsModP(p,k,5);
+        BigInteger p=BitOperator.generatePrimeP(512);
+        BigInteger[] coeficients=BitOperator.generateCoeficientsModP(p,k,256);
 
         System.out.println(p.toString());
 
