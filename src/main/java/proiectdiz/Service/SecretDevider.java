@@ -4,6 +4,7 @@ import proiectdiz.Model.Properties;
 
 import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,10 @@ public class SecretDevider {
         int k=5;
         List<BigInteger> parts = new ArrayList<BigInteger>();
         BigInteger BigIntegerSecret= new BigInteger(secret);
+
+
+
+        System.out.println("Secret:"+BigIntegerSecret);
         /*
        // byte[] secretBiginteger= BigIntegerSecret.toByteArray();
        // String Secret= secretBiginteger.toString();
@@ -24,10 +29,10 @@ public class SecretDevider {
         // int n=properties.getN();
         */
 
-        BigInteger p=BitOperator.generatePrimeP(512);
-        BigInteger[] coeficients=BitOperator.generateCoeficientsModP(p,k,256);
+        BigInteger p=BitOperator.generatePrimeP(BigIntegerSecret.bitLength()+1);
+        BigInteger[] coeficients=BitOperator.generateCoeficientsModP(p,k,p.bitLength());
 
-        System.out.println(p.toString());
+        //System.out.println(p.toString());
 
         return pointGenerator(coeficients,n,k,p,256, BigIntegerSecret);
 

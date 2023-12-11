@@ -12,8 +12,12 @@ public class ProcessSecret {
         Lagrange lag= new Lagrange(parts.getX(), parts.getY(),parts.getP(),parts.getK());
         BigInteger reconstructed=lag.lagrangeInterpolation();
         byte[] reconstructedBytes=reconstructed.toByteArray();
+        byte[] reconstructed2=reconstructed.subtract(parts.getP()).toByteArray();
         String convertedString = new String(reconstructedBytes, StandardCharsets.UTF_8);
-        System.out.println(reconstructed.toString());
+        System.out.println(convertedString);
+
+        String convertedString2 = new String(reconstructed2, StandardCharsets.UTF_8);
+       System.out.println(convertedString2);
 
     }
 

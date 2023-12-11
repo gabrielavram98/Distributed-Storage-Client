@@ -34,18 +34,18 @@ public class Fraction {
         fraction.setNuminator(fraction.getNuminator().divide(gcd));
         fraction.setDenuminator(fraction.getDenuminator().divide(gcd));
     }
-    public void MultiplyOp(Fraction f){
+    public void MultiplyOp(Fraction f,BigInteger p){
         Fraction temp= new Fraction(numinator.multiply(f.getNuminator()),denuminator.multiply(f.getDenuminator()));
         temp.reduceFraction(temp);
         this.setDenuminator(temp.getDenuminator());
-        this.setNuminator(temp.getNuminator());
+        this.setNuminator(temp.getNuminator().mod(p));
 
 
     }
-    public void Add(Fraction f){
+    public void Add(Fraction f,BigInteger p){
         Fraction temp= new Fraction(numinator.multiply(f.getDenuminator()).add(denuminator.multiply(f.getNuminator())),denuminator.multiply(f.getDenuminator()));
         temp.reduceFraction(temp);
-        this.setNuminator(temp.getNuminator());
+        this.setNuminator(temp.getNuminator().mod(p));
         this.setDenuminator(temp.getDenuminator());
 
     }

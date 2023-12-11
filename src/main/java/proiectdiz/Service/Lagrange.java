@@ -23,6 +23,7 @@ public class Lagrange {
 
     public BigInteger lagrangeInterpolation() {
 
+/*
         Fraction ans= new Fraction(new BigInteger("0"),new BigInteger("1"));
 
         for (int i = 0; i < k; i++) {
@@ -31,13 +32,41 @@ public class Lagrange {
             for (int j = 0; j < k; j++) {
                 if (j != i) {
                         Fraction temp= new Fraction(x[j].multiply(new BigInteger("-1")),x[i].subtract(x[j]));
-                        L.MultiplyOp(temp);
+                        L.MultiplyOp(temp,p);
 
                 }
             }
-            ans.Add(L);
+            ans.Add(L,p);
         }
 
-        return ans.getNuminator().divide(ans.getDenuminator());
+        return ans.getNuminator();
+    }
+    */
+
+        BigInteger accum = BigInteger.ZERO;
+        for (int i = 0; i < k; i++) {
+            BigInteger num = BigInteger.ONE;
+            BigInteger den = BigInteger.ONE;
+
+            for (int j = 0; j < k; j++) {
+                if (i != j) {
+                    num = num.multiply(BigInteger.valueOf(-j - 1)).mod(p);
+                    den = den.multiply(BigInteger.valueOf(i - j)).mod(p);
+                }
+            }
+
+
+            final BigInteger value =y[i];// shares[i].getShare();
+
+            final BigInteger tmp = value.multiply(num).multiply(den.modInverse(p)).mod(p);
+            accum = accum.add(p).add(tmp).mod(p);
+
+
+        }
+
+        System.out.println("The secret is: " + accum);
+
+        return accum;
+
     }
 }

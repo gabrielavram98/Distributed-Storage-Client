@@ -35,6 +35,9 @@ public class BitOperator {
 
 
             coeficients[i]=new BigInteger(bitlength, new Random()).mod(p);
+            if(coeficients[i].compareTo(BigInteger.ZERO)<=0){
+                i--;
+            }
         }
         return coeficients;
     }

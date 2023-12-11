@@ -7,6 +7,7 @@ import proiectdiz.Helpers.ValidationCheck;
 import proiectdiz.Service.MACAppender;
 import proiectdiz.Service.ProcessSecret;
 
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
@@ -31,9 +32,7 @@ public class RequestHandler {
         System.arraycopy(mac,0,secret,0,mac.length);
 
         System.arraycopy(stringSecret,0,secret,mac.length,stringSecret.length);
-       // byte[] secret2= new byte[secret.length-32];
-       // System.arraycopy(secret,32,secret2,0,secret.length-32);
-       // String secrettoStr= new String(secret2,StandardCharsets.UTF_8);
+
 
         ProcessSecret.Process(secret);
         return HttpStatus.ACCEPTED;
