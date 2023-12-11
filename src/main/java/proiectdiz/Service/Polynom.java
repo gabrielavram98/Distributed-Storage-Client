@@ -3,9 +3,11 @@ package proiectdiz.Service;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Random;
+import java.util.UUID;
+
 public class Polynom {
     private BigInteger[] coefficients;
-
+    private UUID guid= new UUID.rand
     private BigInteger[] signedCoefficients;
     private int[] sign;
     private int n;

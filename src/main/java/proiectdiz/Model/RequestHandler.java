@@ -28,8 +28,9 @@ public class RequestHandler {
         assert requestBodyJSON != null;
         byte[] mac=MACAppender.CreateMAC(requestBodyJSON);
         byte[] stringSecret=requestBodyJSON.get("Data").get("DataContent").toString().getBytes(StandardCharsets.UTF_8);
-        byte[] secret= new byte[32+secretLenght];
-        System.arraycopy(mac,0,secret,0,mac.length);
+        byte[] secret= new byte[33+secretLenght];
+
+        System.arraycopy(mac,0,secret,1,mac.length);
 
         System.arraycopy(stringSecret,0,secret,mac.length,stringSecret.length);
 
