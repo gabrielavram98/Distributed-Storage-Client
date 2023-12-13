@@ -1,5 +1,10 @@
 package proiectdiz.Service;
 
+import org.springframework.web.reactive.function.client.WebClient;
+import proiectdiz.Config.WebClientConfig;
+import proiectdiz.Helpers.JsonHandler;
+import proiectdiz.Sender.SenderService;
+
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -9,9 +14,12 @@ public class ProcessSecret {
     public static void Process(byte[] secret){
         SecretDevider devider= new SecretDevider();
         Polynom parts= devider.Devide(secret);
+        String[] shares= JsonHandler.BodyBuilder(parts);
+        WebClientConfig webconfig= new WebClientConfig();
+        SenderService send= new SenderService( webconfig.webClientBuilder());
+        send.sendJsonToReceiver(shares[0]);
 
-
-
+        
         Lagrange lag= new Lagrange(parts.getX(), parts.getY(),parts.getP(),parts.getK());
         BigInteger reconstructed=lag.lagrangeInterpolation();
         byte[] reconstructedBytes=reconstructed.toByteArray();

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class Polynom {
     private BigInteger[] coefficients;
-    private UUID guid= new UUID.rand
+    private UUID guid;
     private BigInteger[] signedCoefficients;
     private int[] sign;
     private int n;
@@ -51,7 +51,7 @@ public class Polynom {
     }
 
     public void generateX(){
-        for (int i = 0; i < k - 1; i++) {
+        for (int i = 0; i < n; i++) {
             x[i] = randomZp(p);
             System.out.println("X:"+ i +":"+x[i]);
 
@@ -103,5 +103,9 @@ public class Polynom {
                 return r;
             }
         }
+    }
+
+    public void setGuid(UUID guid) {
+        this.guid = guid;
     }
 }

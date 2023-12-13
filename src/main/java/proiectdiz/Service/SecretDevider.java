@@ -34,7 +34,7 @@ public class SecretDevider {
 
         //System.out.println(p.toString());
 
-        return pointGenerator(coeficients,n,k,p,256, BigIntegerSecret);
+        return pointGenerator(coeficients,n,k,p,BigIntegerSecret.bitLength()+1, BigIntegerSecret);
 
     }
 
