@@ -1,4 +1,5 @@
 package proiectdiz.Helpers;
+import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,5 +67,26 @@ public class JsonHandler {
         return sharesJSON;
 
     }
+    public static String[] ExtractKeyEelements( String response){
+            JsonNode responseJSON= StringToJson(response);
+            if(responseJSON!=null){
 
+                 //keys=responseJSON.get("keys");
+            }
+
+
+    }
 }
+ /*
+    {
+        "keys": [
+        {
+            "key_ID": "123456",
+                "key_ID_extension": "string",
+                "key": "string",
+                "key_extension": "string"
+        }
+  ],
+        "key_container_extension": "string"
+    }
+    */

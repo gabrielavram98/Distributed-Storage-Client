@@ -1,27 +1,29 @@
 package proiectdiz.Sender;
-import reactor.core.publisher.Mono;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Service
-public class SenderService {
+public class KeyRequestService {
 
-    private final WebClient webClient;
+    private final WebClient KeyRequestClient;
 
     @Autowired
-    public SenderService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8081/api")
+    public KeyRequestService(WebClient.Builder KeyRequestBuilder){
+        this.KeyRequestClient=KeyRequestBuilder.baseUrl("https://localhost:44316")
                 .filter(logRequest())
                 .filter(logResponse())
                 .build();
     }
 
-    public void sendJsonToReceiver(String jsonValue) {
-        webClient.post().uri("/server1")
-                .body(BodyInserters.fromValue(jsonValue))
+
+    public void getStatus(String jsonValue) {
+        KeyRequestClient.get().uri("/org_1_alice/api/v1/keys/org_2_bob/status")
+
                 .retrieve()
                 .bodyToMono(String.class)
                 .subscribe(
@@ -41,6 +43,31 @@ public class SenderService {
                 );
     }
 
+    public void getKeys(String jsonValue) {
+        KeyRequestClient.post().uri("/org_1_alice/api/v1/keys/org_2_bob/enc_keys")
+                .body(BodyInserters.fromValue(jsonValue))
+                .retrieve()
+                .bodyToMono(String.class)
+                .subscribe(
+                        response -> {
+
+                            System.out.println("Response received: " + response);
+
+
+                        },
+                        error -> {
+
+                            System.err.println("Error occurred: " + error.getMessage());
+                        },
+                        () -> {
+
+                            System.out.println("Request completed");
+                        }
+                );
+    }
+
+
+
 
 
     private ExchangeFilterFunction logRequest() {
@@ -58,4 +85,11 @@ public class SenderService {
             return Mono.just(clientResponse);
         });
     }
+
+
+
+
+
+
+
 }
