@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import proiectdiz.Helpers.JsonHandler;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -14,7 +15,7 @@ public class KeyRequestService {
 
     @Autowired
     public KeyRequestService(WebClient.Builder KeyRequestBuilder){
-        this.KeyRequestClient=KeyRequestBuilder.baseUrl("https://localhost:44316")
+        this.KeyRequestClient=KeyRequestBuilder.baseUrl("http://localhost:44316")
                 .filter(logRequest())
                 .filter(logResponse())
                 .build();
@@ -22,6 +23,7 @@ public class KeyRequestService {
 
 
     public void getStatus(String jsonValue) {
+        Object mapper=
         KeyRequestClient.get().uri("/org_1_alice/api/v1/keys/org_2_bob/status")
 
                 .retrieve()
@@ -50,7 +52,7 @@ public class KeyRequestService {
                 .bodyToMono(String.class)
                 .subscribe(
                         response -> {
-
+                            JsonHandler.ExtractKeyEelements(response);
                             System.out.println("Response received: " + response);
 
 

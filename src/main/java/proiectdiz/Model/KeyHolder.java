@@ -15,6 +15,6 @@ public class KeyHolder {
     }
 
     public static void FlushKeys(){
-
+        KeyList.clear();
     }
 }

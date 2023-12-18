@@ -16,12 +16,5 @@ public class Properties {
     @Value("${myapp.l}")
     private String l;
 
-    public int getN() {
-        System.out.println(n);
-        return Integer.parseInt(n);
-    }
 
-    public int getL() {
-       return Integer.parseInt(l);
-    }
 }

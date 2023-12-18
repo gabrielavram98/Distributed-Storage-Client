@@ -10,6 +10,8 @@ import proiectdiz.Log.Log;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import proiectdiz.Model.KeyHolder;
+import proiectdiz.Model.QuantecKey;
 import proiectdiz.Service.Polynom;
 
 public class JsonHandler {
@@ -67,12 +69,20 @@ public class JsonHandler {
         return sharesJSON;
 
     }
-    public static String[] ExtractKeyEelements( String response){
+    public static void ExtractKeyEelements( String response){
             JsonNode responseJSON= StringToJson(response);
             if(responseJSON!=null){
 
-                 //keys=responseJSON.get("keys");
+                JsonNode keys=responseJSON.get("keys");
+                for(int i=0;i<keys.size();i++){
+                    JsonNode key=keys.get(0);
+
+                    QuantecKey newKey= new QuantecKey(key.get("key_ID").asText(),key.get("key_ID_extension").asText(),key.get("key").asText(),responseJSON.get("key_container_extension").asText());
+                    KeyHolder.AddKey(newKey);
+
+                }
             }
+
 
 
     }
