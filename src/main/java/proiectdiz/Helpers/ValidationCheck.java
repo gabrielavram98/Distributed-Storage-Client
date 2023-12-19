@@ -12,10 +12,10 @@ import com.networknt.schema.ValidationMessage;
 
 
 public class ValidationCheck {
-     public static int Validate(JsonNode request) throws Exception {
+     public static int Validate(JsonNode request, String schema) throws Exception {
          ObjectMapper objectMapper = new ObjectMapper();
 
-         JsonSchema schemaStream = SchemaLoader.LoadSchemaFromPath( "src\\main\\resources\\RequestSchema.json" );
+         JsonSchema schemaStream = SchemaLoader.LoadSchemaFromPath( schema );
          Set<ValidationMessage> validationMessage = null;
          if (schemaStream != null) {
 

@@ -6,6 +6,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import proiectdiz.Helpers.JsonHandler;
+import proiectdiz.Helpers.ValidationCheck;
+import proiectdiz.Log.Log;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -44,16 +46,23 @@ public class KeyRequestService {
                         }
                 );
     }
-
-    public void getKeys(String jsonValue) {
-        KeyRequestClient.post().uri("/org_1_alice/api/v1/keys/org_2_bob/enc_keys")
+////"/org_1_alice/api/v1/keys/org_2_bob/enc_keys"
+    public void getKeys(String jsonValue, String destination) {
+        KeyRequestClient.post().uri( destination+"enc_keys")
                 .body(BodyInserters.fromValue(jsonValue))
                 .retrieve()
                 .bodyToMono(String.class)
                 .subscribe(
                         response -> {
-                            JsonHandler.ExtractKeyEelements(response);
-                            System.out.println("Response received: " + response);
+                            try {
+                                ValidationCheck.Validate(JsonHandler.StringToJson(response),"src\\\\main\\\\resources\\\\KeyFormatContainerSchema.json");
+                                JsonHandler.ExtractKeyEelements(response);
+                                System.out.println("Response received: " + response);
+                                Log.TraceLog("Response received: " + response);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+
 
 
                         },

@@ -1,4 +1,6 @@
 package proiectdiz.Sender;
+import proiectdiz.Helpers.JsonHandler;
+import proiectdiz.Helpers.ValidationCheck;
 import reactor.core.publisher.Mono;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,26 +21,36 @@ public class SenderService {
                 .build();
     }
 
-    public void sendJsonToReceiver(String jsonValue) {
-        webClient.post().uri("/server1")
-                .body(BodyInserters.fromValue(jsonValue))
-                .retrieve()
-                .bodyToMono(String.class)
-                .subscribe(
-                        response -> {
+    public void sendJsonToReceiver(String jsonValue,String destination) {
 
-                            System.out.println("Response received: " + response);
+            webClient.post().uri(destination)
+                    .body(BodyInserters.fromValue(jsonValue))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .subscribe(
+                            response -> {
 
-                        },
-                        error -> {
+                                System.out.println("Response received: " + response);
 
-                            System.err.println("Error occurred: " + error.getMessage());
-                        },
-                        () -> {
+                                ///try {
+                               // if (ValidationCheck.Validate(JsonHandler.StringToJson(response), "src\\main\\resources\\RequestSchema.json") != 0) {
 
-                            System.out.println("Request completed");
-                        }
-                );
+                            //        throw new Exception("Error in Validating the request" + JsonHandler.StringToJson(response));
+                           //     }
+                           //         } catch (Exception e) {
+                           //             throw new RuntimeException(e);
+                           //         }
+                            },
+                            error -> {
+
+                                System.err.println("Error occurred: " + error.getMessage());
+                            },
+                            () -> {
+
+                                System.out.println("Request completed");
+                            }
+                    );
+
     }
 
 

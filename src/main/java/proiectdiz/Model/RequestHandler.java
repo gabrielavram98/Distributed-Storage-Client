@@ -20,7 +20,7 @@ public class RequestHandler {
 
     public static HttpStatus Handle(String requestBody) throws Exception {
         JsonNode requestBodyJSON= JsonHandler.StringToJson(requestBody);
-        if(ValidationCheck.Validate(requestBodyJSON)!=0){
+        if(ValidationCheck.Validate(requestBodyJSON, "src\\main\\resources\\RequestSchema.json")!=0){
 
             throw new Exception("Error in Validating the request"+requestBody);
         }
