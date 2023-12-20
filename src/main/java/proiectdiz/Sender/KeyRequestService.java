@@ -56,9 +56,10 @@ public class KeyRequestService {
                         response -> {
                             try {
                                 ValidationCheck.Validate(JsonHandler.StringToJson(response),"src\\\\main\\\\resources\\\\KeyFormatContainerSchema.json");
-                                JsonHandler.ExtractKeyEelements(response);
+                                JsonHandler.ExtractKeyEelements(response,destination);
                                 System.out.println("Response received: " + response);
                                 Log.TraceLog("Response received: " + response);
+
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }

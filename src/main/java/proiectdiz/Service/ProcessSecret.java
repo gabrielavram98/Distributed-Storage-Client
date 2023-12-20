@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import proiectdiz.Config.WebClientConfig;
+import proiectdiz.Encrypt.AESEncrypt;
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Model.DataFormat.SAE_Slaves;
 import proiectdiz.Model.DataFormat.SAE_Masters;
 import proiectdiz.Sender.KeyRequestService;
 import proiectdiz.Sender.SenderService;
 
+import java.awt.*;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
@@ -27,6 +29,7 @@ public class ProcessSecret {
             node.put("number","1");
             node.put("size",1024);
             _keyRequestService.getKeys(node.asText(), "/"+SAE_Masters.values()[i]+"/"+"/api/v1/keys/"+ SAE_Slaves.values()[i]+"/");
+           // AESEncrypt _encryptor= new AESEncrypt();
         }
 
         WebClientConfig webconfig= new WebClientConfig();

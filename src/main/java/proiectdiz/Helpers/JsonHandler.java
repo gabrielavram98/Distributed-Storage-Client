@@ -69,16 +69,21 @@ public class JsonHandler {
         return sharesJSON;
 
     }
-    public static void ExtractKeyEelements( String response){
+    public static void ExtractKeyEelements( String response, String destination){
             JsonNode responseJSON= StringToJson(response);
             if(responseJSON!=null){
 
                 JsonNode keys=responseJSON.get("keys");
                 for(int i=0;i<keys.size();i++){
                     JsonNode key=keys.get(0);
+                    String key_ID=key.get("key_ID").asText();
+                    String key_=key.get("key").asText();
+                    String key_ID_extension=key.get("key_ID_extension").asText();
+                    String key_container_extension= responseJSON.get("key_container_extension").asText();
+                    String[] dest= destination.split("/");
 
-                    QuantecKey newKey= new QuantecKey(key.get("key_ID").asText(),key.get("key_ID_extension").asText(),key.get("key").asText(),responseJSON.get("key_container_extension").asText());
-                    KeyHolder.AddKey(newKey);
+                    QuantecKey newKey= new QuantecKey(key_ID,key_,key_ID_extension,key_container_extension,dest[1],dest[dest.length-1]);
+                    KeyHolder.AddKey(newKey,dest[1]+"/"+dest[dest.length-1]);
 
                 }
             }
