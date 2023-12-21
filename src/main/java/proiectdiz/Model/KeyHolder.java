@@ -21,10 +21,20 @@ public class KeyHolder {
 //TODO: Figure out a way to retrieve the right key from holder
 
     }
+    //Map.Entry<String, Integer> entry : myMap.entrySet()
+    public static QuantecKey  getKeyByUUID(String uuid){
+        QuantecKey key=null;
+        for(Map.Entry<String,String> entry: keyMapper.entrySet()){
+            if(entry.getKey().equals(uuid)){
+                key=getKey(entry.getValue());
+            }
+        }
+        return key;
+    }
 
-    public static void AddKey(QuantecKey key,String SlaveMaster){
+    public static void AddKey(QuantecKey key, String uuid){
         KeyList.add(key);
-        keyMapper.put(key.get_keyId(),SlaveMaster);
+        keyMapper.put(uuid,key.get_keyId());
 
     }
 

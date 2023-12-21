@@ -47,7 +47,7 @@ public class KeyRequestService {
                 );
     }
 ////"/org_1_alice/api/v1/keys/org_2_bob/enc_keys"
-    public void getKeys(String jsonValue, String destination) {
+    public void getKeys(String jsonValue, String destination, String uuid) {
         KeyRequestClient.post().uri( destination+"enc_keys")
                 .body(BodyInserters.fromValue(jsonValue))
                 .retrieve()
@@ -56,7 +56,7 @@ public class KeyRequestService {
                         response -> {
                             try {
                                 ValidationCheck.Validate(JsonHandler.StringToJson(response),"src\\\\main\\\\resources\\\\KeyFormatContainerSchema.json");
-                                JsonHandler.ExtractKeyEelements(response,destination);
+                                JsonHandler.ExtractKeyEelements(response, uuid);
                                 System.out.println("Response received: " + response);
                                 Log.TraceLog("Response received: " + response);
 
