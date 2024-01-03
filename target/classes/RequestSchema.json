@@ -5,6 +5,9 @@
       "type": "string",
       "enum": ["Store","Get"]
     },
+    "ClientID": {
+      "type": "string"
+    },
     "Data": {
       "type": "object",
       "properties": {
