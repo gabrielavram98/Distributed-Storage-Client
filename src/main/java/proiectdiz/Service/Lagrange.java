@@ -1,7 +1,7 @@
 package proiectdiz.Service;
-import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
-import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
-import org.apache.commons.math3.analysis.solvers.PolynomialSolver;
+//import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
+//import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
+//import org.apache.commons.math3.analysis.solvers.PolynomialSolver;
 import java.math.BigInteger;
 
 public class Lagrange {

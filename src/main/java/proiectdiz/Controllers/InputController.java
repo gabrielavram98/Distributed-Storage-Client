@@ -1,13 +1,13 @@
 package proiectdiz.Controllers;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import proiectdiz.Log.Log;
 import proiectdiz.Model.RequestHandler;
 
-@RestController
+@Controller
 public class InputController {
 
     @PostMapping("/store")
@@ -27,4 +27,11 @@ public class InputController {
 
 
     }
+
+    @GetMapping("/home")
+    public String index(){
+        return "index";
+    }
+
 }
+

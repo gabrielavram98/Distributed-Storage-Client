@@ -17,7 +17,7 @@ import proiectdiz.Sender.SenderService;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.awt.*;
+//import java.awt.*;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -33,7 +33,7 @@ public class ProcessSecret {
         String[] shares= JsonHandler.BodyBuilder(parts);
 
         //TODO: CLASA DE PRIMIT CHEI SI DE TRIMIS PARTILE
-        /*
+
         for(int i=0;i<parts.getY().length;i++){
             WebClientConfig keySenderWebConfig= new WebClientConfig();
             KeyRequestService _keyRequestService= new KeyRequestService(keySenderWebConfig.webClientBuilder());
@@ -87,7 +87,7 @@ public class ProcessSecret {
       // System.out.println(convertedString2);
 
 
-         */
+
     }
 
 }
