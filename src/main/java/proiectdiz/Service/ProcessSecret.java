@@ -9,6 +9,7 @@ import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Helpers.LockEelement;
 import proiectdiz.Model.DataFormat.SAE_Slaves;
 import proiectdiz.Model.DataFormat.SAE_Masters;
+import proiectdiz.Model.DataFormat.ShareJSON;
 import proiectdiz.Model.KeyHolder;
 import proiectdiz.Model.Properties;
 import proiectdiz.Model.QuantecKey;
@@ -32,13 +33,17 @@ public class ProcessSecret {
         SecretDevider devider= new SecretDevider();
         Polynom parts= devider.Devide(secret);
         String[] shares= JsonHandler.BodyBuilder(parts);
-        String[] key_ids= KeyHolder.getKeys();
+        String[] key_ids_UUID= KeyHolder.getKeysUUID();
         QuantecKey[] keys= new QuantecKey[Properties.getN()];
-        for(String key_id : key_ids){
-            QuantecKey key_= KeyHolder.getKeyByUUID(key_id);
-
+        ShareJSON[] _sharesJSON= new ShareJSON[Properties.getN()];
+        for(int i=0;i<Properties.getN();i++){
+            QuantecKey key_= KeyHolder.getKeyByUUID(key_ids_UUID[i]);
+            AESEncrypt _encryptor= new AESEncrypt(key_.getKey(),shares[i]);
+            byte[] _encrypted_=_encryptor.Encrypt();
+            ShareJSON sharejson= new ShareJSON(new String(_encrypted_, StandardCharsets.UTF_8),key_.get_keyId());
+            _sharesJSON[i]=sharejson;
         }
-        //TODO: CLASA DE PRIMIT CHEI SI DE TRIMIS PARTILE
+
 /*
         for(int i=0;i<parts.getY().length;i++){
             WebClientConfig keySenderWebConfig= new WebClientConfig();

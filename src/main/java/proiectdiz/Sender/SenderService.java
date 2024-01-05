@@ -21,35 +21,13 @@ public class SenderService {
                 .build();
     }
 
-    public void sendJsonToReceiver(String jsonValue,String destination) {
+    public String sendJsonToReceiver(String jsonValue,String destination) {
 
-            webClient.post().uri(destination)
-                    .body(BodyInserters.fromValue(jsonValue))
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .subscribe(
-                            response -> {
-
-                                System.out.println("Response received: " + response);
-
-                                ///try {
-                               // if (ValidationCheck.Validate(JsonHandler.StringToJson(response), "src\\main\\resources\\RequestSchema.json") != 0) {
-
-                            //        throw new Exception("Error in Validating the request" + JsonHandler.StringToJson(response));
-                           //     }
-                           //         } catch (Exception e) {
-                           //             throw new RuntimeException(e);
-                           //         }
-                            },
-                            error -> {
-
-                                System.err.println("Error occurred: " + error.getMessage());
-                            },
-                            () -> {
-
-                                System.out.println("Request completed");
-                            }
-                    );
+          return webClient.post().uri(destination)
+                  .body(BodyInserters.fromValue(jsonValue))
+                  .retrieve()
+                  .bodyToMono(String.class)
+                  .block();
 
     }
 

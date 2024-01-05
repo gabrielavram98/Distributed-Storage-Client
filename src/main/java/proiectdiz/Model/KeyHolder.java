@@ -46,7 +46,7 @@ public class KeyHolder {
         KeyList.remove(key);
     }
 
-    public static String[] getKeys() throws InterruptedException {
+    public static String[] getKeysUUID() throws InterruptedException {
         //Map<Integer,String> keys= new HashMap<>();
         String[] guid= new String[Properties.getN()];
         KeyRequestor[] requests= new KeyRequestor[Properties.getN()];
