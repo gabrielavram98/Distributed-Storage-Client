@@ -15,6 +15,11 @@ public class Properties {
 
     @Value("${myapp.l}")
     private String l;
-
+    public static int getN(){
+        return 6;
+    }
+    public static int getL(){
+        return 4;
+    }
 
 }

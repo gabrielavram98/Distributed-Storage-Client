@@ -1,24 +1,25 @@
 package proiectdiz.Model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import proiectdiz.Log.Log;
+import proiectdiz.Service.KeyRequestor;
+
+import java.util.*;
 
 public class KeyHolder {
     private static List<QuantecKey> KeyList= new ArrayList<QuantecKey>();
     private static Map<String,String> keyMapper= new HashMap<>();
 
-    public static QuantecKey getKey(String keyId){
+    public static QuantecKey getKey(String guid){
         QuantecKey key = null;
         for(QuantecKey keyFound:KeyList){
-            if(keyFound.get_keyId().equals(keyId)){
+            if(keyFound.get_keyId().equals(guid)){
                key= keyFound;
+               break;
 
             }
         }
         return key;
-//TODO: Figure out a way to retrieve the right key from holder
+
 
     }
     //Map.Entry<String, Integer> entry : myMap.entrySet()
@@ -27,6 +28,7 @@ public class KeyHolder {
         for(Map.Entry<String,String> entry: keyMapper.entrySet()){
             if(entry.getKey().equals(uuid)){
                 key=getKey(entry.getValue());
+                break;
             }
         }
         return key;
@@ -43,4 +45,33 @@ public class KeyHolder {
         QuantecKey key= getKey(id);
         KeyList.remove(key);
     }
+
+    public static String[] getKeys() throws InterruptedException {
+        //Map<Integer,String> keys= new HashMap<>();
+        String[] guid= new String[Properties.getN()];
+        KeyRequestor[] requests= new KeyRequestor[Properties.getN()];
+        for(int i = 0; i< Properties.getN(); i++) {
+            try{
+                guid[i]= UUID.randomUUID().toString();
+                KeyRequestor req= new KeyRequestor(guid[i],i);
+                requests[i]=req;
+            }
+            catch (Exception e){
+                Log.ErrorLog(e.getMessage());}
+        }
+        for(int i = 0; i< Properties.getN(); i++){
+            requests[i].start();
+
+        }
+        for(int i = 0; i< Properties.getN(); i++){
+            requests[i].join();
+
+        }
+        return guid;
+
+
+    }
+
+
+
 }

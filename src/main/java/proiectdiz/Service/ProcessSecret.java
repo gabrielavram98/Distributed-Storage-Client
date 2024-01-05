@@ -10,6 +10,7 @@ import proiectdiz.Helpers.LockEelement;
 import proiectdiz.Model.DataFormat.SAE_Slaves;
 import proiectdiz.Model.DataFormat.SAE_Masters;
 import proiectdiz.Model.KeyHolder;
+import proiectdiz.Model.Properties;
 import proiectdiz.Model.QuantecKey;
 import proiectdiz.Sender.KeyRequestService;
 import proiectdiz.Sender.SenderService;
@@ -31,9 +32,14 @@ public class ProcessSecret {
         SecretDevider devider= new SecretDevider();
         Polynom parts= devider.Devide(secret);
         String[] shares= JsonHandler.BodyBuilder(parts);
+        String[] key_ids= KeyHolder.getKeys();
+        QuantecKey[] keys= new QuantecKey[Properties.getN()];
+        for(String key_id : key_ids){
+            QuantecKey key_= KeyHolder.getKeyByUUID(key_id);
 
+        }
         //TODO: CLASA DE PRIMIT CHEI SI DE TRIMIS PARTILE
-
+/*
         for(int i=0;i<parts.getY().length;i++){
             WebClientConfig keySenderWebConfig= new WebClientConfig();
             KeyRequestService _keyRequestService= new KeyRequestService(keySenderWebConfig.webClientBuilder());
@@ -86,6 +92,8 @@ public class ProcessSecret {
        // String convertedString2 = new String(reconstructed2, StandardCharsets.UTF_8);
       // System.out.println(convertedString2);
 
+
+ */
 
 
     }

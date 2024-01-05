@@ -1,5 +1,6 @@
 package proiectdiz.Sender;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -25,7 +26,7 @@ public class KeyRequestService {
                 .build();
     }
 
-
+    ;
     public void getStatus(String jsonValue) {
         Object mapper=
         KeyRequestClient.get().uri("/org_1_alice/api/v1/keys/org_2_bob/status")
@@ -49,8 +50,13 @@ public class KeyRequestService {
                 );
     }
 ////"/org_1_alice/api/v1/keys/org_2_bob/enc_keys"
-    public void getKeys(String jsonValue, String destination, String uuid) {
-       // final String[] newkey = {null};
+    public String getKeys(String jsonValue, String destination, String uuid) {
+        return KeyRequestClient.post().uri(destination)
+                .body(BodyInserters.fromValue(jsonValue))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+            /*
          KeyRequestClient.post().uri( destination+"enc_keys")
                 .body(BodyInserters.fromValue(jsonValue))
                 .retrieve()
@@ -76,6 +82,7 @@ public class KeyRequestService {
                  })
 
                   */
+        /*
                  .subscribe(
 
                          response->{
@@ -99,6 +106,8 @@ public class KeyRequestService {
 
 
                  );
+
+                 */
 
 
 
