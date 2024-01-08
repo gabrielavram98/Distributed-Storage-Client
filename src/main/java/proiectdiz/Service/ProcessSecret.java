@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import proiectdiz.Config.WebClientConfig;
-import proiectdiz.Encrypt.AESEncrypt;
+import proiectdiz.Encrypt.AES;
+
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Helpers.LockEelement;
 import proiectdiz.Model.DataFormat.SAE_Slaves;
@@ -38,7 +39,7 @@ public class ProcessSecret {
         ShareJSON[] _sharesJSON= new ShareJSON[Properties.getN()];
         for(int i=0;i<Properties.getN();i++){
             QuantecKey key_= KeyHolder.getKeyByUUID(key_ids_UUID[i]);
-            AESEncrypt _encryptor= new AESEncrypt(key_.getKey(),shares[i]);
+            AES _encryptor= new AES(key_.getKey(),shares[i]);
             byte[] _encrypted_=_encryptor.Encrypt();
             ShareJSON sharejson= new ShareJSON(new String(_encrypted_, StandardCharsets.UTF_8),key_.get_keyId());
             _sharesJSON[i]=sharejson;
