@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "properties": {
+    "keys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key_ID": {
+            "type": "string"
+          },
+          "key_ID_extension": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "key_extension": {
+            "type": "string"
+          }
+        },
+        "required": ["key_ID", "key"],
+        "additionalProperties": false
+      }
+    },
+    "key_container_extension": {
+      "type": "string"
+    }
+  },
+  "required": ["keys"],
+  "additionalProperties": false
+}
