@@ -43,50 +43,14 @@ public class ProcessSecret {
             ShareJSON sharejson= new ShareJSON(new String(_encrypted_, StandardCharsets.UTF_8),key_.get_keyId());
             _sharesJSON[i]=sharejson;
         }
-
-/*
-        for(int i=0;i<parts.getY().length;i++){
-            WebClientConfig keySenderWebConfig= new WebClientConfig();
-            KeyRequestService _keyRequestService= new KeyRequestService(keySenderWebConfig.webClientBuilder());
-            ObjectMapper objectMapper= new ObjectMapper();
-            ObjectNode node = JsonNodeFactory.instance.objectNode();
-            node.put("number","1");
-            node.put("size",1024);
-            String key_uuid= UUID.randomUUID().toString();
-            LockEelement.LockMethod();
-            String json= node.toPrettyString();
-            int iterator=i;
-            CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
-                // Simulate an asynchronous task
-                _keyRequestService.getKeys(json, "/"+SAE_Masters.values()[iterator]+"/"+"/api/v1/keys/"+ SAE_Slaves.values()[iterator]+"/", key_uuid);
-                return "Task completed";
-            });
-
-
-            try {
-                String result = future.get();
-                System.out.println("Result: " + result);
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-          //  _keyRequestService.getKeys(node.toPrettyString(), "/"+SAE_Masters.values()[i]+"/"+"/api/v1/keys/"+ SAE_Slaves.values()[i]+"/", key_uuid);
-
-            QuantecKey key= KeyHolder.getKeyByUUID(key_uuid);
-            System.out.println("Acesta este ID UL:"+key.get_keyId());
-            AESEncrypt _encryptor= new AESEncrypt(key.getKey(),shares[i]);
-            byte[] _encrypted_=_encryptor.Encrypt();
-            WebClientConfig webconfig= new WebClientConfig();
-            SenderService send= new SenderService( webconfig.webClientBuilder());
-            String shareToSend = new String(_encrypted_, StandardCharsets.UTF_8);
-            node=JsonNodeFactory.instance.objectNode();
-            node.put("share",shareToSend);
-            send.sendJsonToReceiver(shareToSend,"/server1");
-
-        }
+        ShareManager manager= new ShareManager();
+        manager.SendShares(_sharesJSON);
 
 
 
-        
+
+
+        /*
         Lagrange lag= new Lagrange(parts.getX(), parts.getY(),parts.getP(),parts.getK());
         BigInteger reconstructed=lag.lagrangeInterpolation();
         byte[] reconstructedBytes=reconstructed.toByteArray();
