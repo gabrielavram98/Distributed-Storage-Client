@@ -23,6 +23,7 @@ import javax.crypto.NoSuchPaddingException;
 //import java.awt.*;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -30,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class ProcessSecret {
-    public static void Process(byte[] secret) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, ExecutionException, InterruptedException {
+    public static void Process(byte[] secret) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, ExecutionException, InterruptedException, InvalidAlgorithmParameterException {
         SecretDevider devider= new SecretDevider();
         Polynom parts= devider.Devide(secret);
         String[] shares= JsonHandler.BodyBuilder(parts);
@@ -40,8 +41,8 @@ public class ProcessSecret {
         for(int i=0;i<Properties.getN();i++){
             QuantecKey key_= KeyHolder.getKeyByUUID(key_ids_UUID[i]);
             AES _encryptor= new AES(key_.getKey(),shares[i]);
-            byte[] _encrypted_=_encryptor.Encrypt();
-            ShareJSON sharejson= new ShareJSON(new String(_encrypted_, StandardCharsets.UTF_8),key_.get_keyId());
+            String _encrypted_=_encryptor.Encrypt();
+            ShareJSON sharejson= new ShareJSON(_encrypted_,key_.get_keyId(),_encryptor.getIV());
             _sharesJSON[i]=sharejson;
         }
         ShareManager manager= new ShareManager();

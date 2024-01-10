@@ -1,43 +1,60 @@
 package proiectdiz.Encrypt;
 
 import javax.crypto.*;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 
 public class AES {
-     private byte[] key;
-     private byte[] toEncrypt;
-    public AES(String key, String toEncrypt){
+
+    private byte[] key;
+    private byte[] Text;
+    private String algorithm;
+    private IvParameterSpec iv;
+
+    public AES(String key, String Text ){
         this.key=key.getBytes(StandardCharsets.UTF_8);
-        this.toEncrypt=toEncrypt.getBytes(StandardCharsets.UTF_8);
+        this.Text=Text.getBytes(StandardCharsets.UTF_8);
+        this.algorithm="AES/CBC/PKCS5Padding";
+        this.iv=_generate_IV();
     }
-    public byte[] Encrypt() throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-/*
-        Cipher cipher = Cipher.getInstance("AES");
-        Cipher cipher2 = Cipher.getInstance("AES");
+    public String getIV(){
+        return ivParameterSpecToString(this.iv);
+    }
 
-        cipher.init(Cipher.ENCRYPT_MODE, secret_key);
-        cipher2.init(Cipher.DECRYPT_MODE, secret_key);
-        byte[] encrypt=cipher.doFinal(toEncrypt);
-        byte[] decrypt=cipher2.doFinal(new String(encrypt,StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8));
-        String dec= new String(decrypt,StandardCharsets.UTF_8);
-        //System.out.println(new String(encrypt,StandardCharsets.UTF_8));
-        return cipher.doFinal(toEncrypt);
+    private static String ivParameterSpecToString(IvParameterSpec ivParameterSpec) {
+        byte[] ivBytes = ivParameterSpec.getIV();
+        return Base64.getEncoder().encodeToString(ivBytes);
+    }
+    public void setIv(IvParameterSpec iv) {
+        this.iv = iv;
+    }
 
- */
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        SecretKey secret_key= convertBytesToSecretKey(key);
 
-        IvParameterSpec iv = new IvParameterSpec(INIT_VECTOR.getBytes("UTF-8"));
+    public  String Encrypt() throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException,
+            BadPaddingException, IllegalBlockSizeException {
+        SecretKey secret_key= convertBytesToSecretKey(this.key);
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.ENCRYPT_MODE,secret_key, this.iv);
+        byte[] cipherText = cipher.doFinal(Text);
+        return Base64.getEncoder()
+                .encodeToString(cipherText);
+    }
 
-        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-
-        return cipher.doFinal(data.getBytes("UTF-8"));
-
+    public String Decrypt() throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+        SecretKey secret_key= convertBytesToSecretKey(this.key);
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.DECRYPT_MODE,secret_key, this.iv);
+        byte[] cipherText = cipher.doFinal(Text);
+        return Base64.getEncoder()
+                .encodeToString(cipherText);
 
     }
     private static SecretKey convertBytesToSecretKey(byte[] keyBytes) {
@@ -45,11 +62,25 @@ public class AES {
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, "AES");
     }
 
-    private static byte[] generateRandomIV() {
 
-        SecureRandom random = new SecureRandom();
+    public   IvParameterSpec _generate_IV() {
         byte[] iv = new byte[16];
-        random.nextBytes(iv);
-        return iv;
+        new SecureRandom().nextBytes(iv);
+        return new IvParameterSpec(iv);
     }
+
+
+
+    public  String decrypt(  String cipherText, SecretKey key,
+                             IvParameterSpec iv) throws NoSuchPaddingException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException, InvalidKeyException,
+            BadPaddingException, IllegalBlockSizeException {
+
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.DECRYPT_MODE, key, iv);
+        byte[] plainText = cipher.doFinal(Base64.getDecoder()
+                .decode(cipherText));
+        return new String(plainText);
+    }
+
 }
