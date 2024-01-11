@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+        }
+
+        .form-container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px; /* Add margin to separate the forms */
+        }
+
+        h1 {
+            color: #3498db;
+        }
+
+        textarea[name="userInput"] {
+            width: 17cm;
+            height: 12cm;
+            font-size: 16px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            resize: none; /* Prevent resizing of the textarea */
+        }
+
+        .button-form {
+            /* Add styling for the button container if needed */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="form-container">
+        <h1>Introduceti textul:</h1>
+        <form action="/process-text" method="post" class="mb-3">
+            <textarea name="userInput"></textarea>
+            <div class="button-form">
+                <button type="submit" class="btn btn-primary">Procesează textul</button>
+            </div>
+        </form>
+
+        <!-- File Upload Form -->
+        <form action="/upload-file" method="post" enctype="multipart/form-data">
+            <h1>Încărcați un fișier:</h1>
+            <input type="file" name="fileInput" class="mb-3">
+            <div class="button-form">
+                <button type="submit" class="btn btn-primary">Încărcați fișierul</button>
+            </div>
+        </form>
+
+        <!-- Added Comboboxes for N and L -->
+        <form action="/your-action" method="post">
+            <h1>Configurații:</h1>
+            <label for="n">N:</label>
+            <select name="n" id="n">
+                <!-- Thymeleaf expression to generate options from 2 to a value obtained from application.properties -->
+                <option th:each="i : ${#numbers.sequence(2, 7)}" th:value="${i}" th:text="${i}"></option>
+            </select>
+
+            <label for="l">L:</label>
+            <select name="l" id="l">
+                <!-- Thymeleaf expression to generate options from 1 to the same value as N -->
+                <option th:each="i : ${#numbers.sequence(1, 7)}" th:value="${i}" th:text="${i}"></option>
+            </select>
+
+            <div class="button-form">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
