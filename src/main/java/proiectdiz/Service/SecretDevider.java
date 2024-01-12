@@ -11,11 +11,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.core.env.Environment;
 
 public class SecretDevider {
+    int n;
+    int k;
+    BigInteger[] coeficients;
+    BigInteger p;
+    public SecretDevider(BigInteger p){
+        Properties properties= new Properties();
+        n=7;
+        k=5;
+        coeficients=BitOperator.generateCoeficientsModP(p,k,p.bitLength());
+        this.p=p;
+
+    }
 
     public  Polynom Devide(byte[] secret){
-        Properties properties= new Properties();
-        int n=7;
-        int k=5;
+
         List<BigInteger> parts = new ArrayList<BigInteger>();
         BigInteger BigIntegerSecret= new BigInteger(secret);
 
@@ -28,9 +38,10 @@ public class SecretDevider {
        //
         // int n=properties.getN();
         */
+        //BigInteger p= new BigInteger("8179931315112863805513837519301825259317163714001390935596696969971767919105186246500545495233727286288593745665614474514507902638447856085527919595017171");
+        //BigInteger p=BitOperator.generatePrimeP(BigIntegerSecret.bitLength()+1);
 
-        BigInteger p=BitOperator.generatePrimeP(BigIntegerSecret.bitLength()+1);
-        BigInteger[] coeficients=BitOperator.generateCoeficientsModP(p,k,p.bitLength());
+
 
         //System.out.println(p.toString());
 

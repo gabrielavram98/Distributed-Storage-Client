@@ -2,7 +2,11 @@ package proiectdiz.Controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +15,10 @@ import proiectdiz.Log.Log;
 import proiectdiz.Model.PropertiesApp;
 import proiectdiz.Model.RequestHandler;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 @Controller
 public class InputController {
@@ -42,17 +48,10 @@ public class InputController {
         return "text-input";
     }
 
-    @PostMapping("/process-text")
-    public String processText(@RequestParam("userInput") String userInput, Model model) throws Exception {
 
-        //String processedText = takeInput(userInput);
-        String uuid=RequestHandler.Handle(userInput,"Browser");
-        model.addAttribute("processedText", uuid);
-        return "result";
-    }
 
     @PostMapping("/upload-file")
-    public String processFile(@RequestParam("fileInput") MultipartFile file) {
+    public String processFile(@RequestParam("fileInput") MultipartFile file, Model model) {
         if (!file.isEmpty()) {
             try {
                 // Get the input stream of the uploaded file
@@ -61,7 +60,7 @@ public class InputController {
                 // Read the content of the file (you can use different mechanisms based on your needs)
                 byte[] fileBytes = inputStream.readAllBytes();
                 String fileContent = new String(fileBytes);
-                String uuid=RequestHandler.Handle(fileContent,"Browser");
+                RequestHandler.Handle(fileContent,"Browser");
                 System.out.println(fileContent);
                 // Process or use the file content as needed
 
@@ -69,13 +68,14 @@ public class InputController {
                 inputStream.close();
 
                 // Redirect to a success page or return a response
+               // model.addAttribute("processedText", uuid);
                 return "result";
-            } catch (IOException e) {
-                e.printStackTrace();
-                // Handle the exception (e.g., show an error page)
-                return "error";
+
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                Log.ErrorLog(e.getMessage());
+
+                model.addAttribute("ErrorMessage",e.getMessage());
+                return "error";
             }
         } else {
             // Handle the case where no file is uploaded
@@ -86,9 +86,16 @@ public class InputController {
 
     }
 
-    private String takeInput(String userInput) {
 
-        return "Text procesat: " + userInput;
+
+    @GetMapping("/downloadFile")
+    public ResponseEntity<String> generateAndDownloadFile( ) {
+
+
+        String content = RequestHandler.returnUUID();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=SecredIdentifier.txt");
+        return ResponseEntity.ok().headers(headers).body(content);
     }
 
 

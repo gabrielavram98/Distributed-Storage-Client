@@ -37,11 +37,11 @@ public class JsonHandler {
         }
 
     }
-    public static String[] BodyBuilder(Polynom parts ){
+    public static String[] BodyBuilder(Polynom parts,UUID uuid ){
 
         String[] sharesJSON= new String[parts.getY().length];
 
-        UUID uuid = UUID.randomUUID();
+        //UUID uuid = UUID.randomUUID();
         parts.setGuid(uuid);
         ObjectMapper objectMapper = new ObjectMapper();
 

@@ -23,8 +23,8 @@ public class MACAppender {
         return mac.doFinal(DataContent.toString().getBytes(StandardCharsets.UTF_8));
 
     }
-    public static byte[] CreateMAC(String Request) throws NoSuchAlgorithmException, InvalidKeyException {
-        SecretKey password= PasswordGenerator.GeneratePassword();
+    private static byte[] CreateMAC(String Request,SecretKey password) throws NoSuchAlgorithmException, InvalidKeyException {
+        //SecretKey password= PasswordGenerator.GeneratePassword();
         System.out.println("Password:"+ new BigInteger (password.getEncoded()) );
        // JsonNode Data = Request.get("Data");
        // JsonNode DataContent= Data.get("DataContent");
@@ -32,6 +32,16 @@ public class MACAppender {
         mac.init(password);
         return mac.doFinal(Request.getBytes(StandardCharsets.UTF_8));
 
+    }
+
+    public static byte[] AppendMAC(String Request, SecretKey password) throws NoSuchAlgorithmException, InvalidKeyException {
+        byte[] mac= CreateMAC(Request,password);
+        byte[] stringSecret=Request.getBytes(StandardCharsets.UTF_8);
+        String req= new String(stringSecret,StandardCharsets.UTF_8);
+        byte[] secret= new byte[mac.length+stringSecret.length];
+        System.arraycopy(mac,0,secret,0,mac.length);
+        System.arraycopy(stringSecret,0,secret,mac.length,stringSecret.length);
+        return secret;
     }
 
 }

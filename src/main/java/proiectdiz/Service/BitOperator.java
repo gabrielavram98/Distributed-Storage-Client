@@ -16,10 +16,12 @@ public class BitOperator {
         SecureRandom random = new SecureRandom();
       //  long startTime = System.currentTimeMillis();
         //BigInteger p= BigInteger.probablePrime(bitLength, new Random());
+       // if(bitLength<60){
+        //    bitLength=60;
+       // }
         BigInteger p;
         do {
 
-            // Generate a probable prime of the specified bit length
             p = new BigInteger(bitLength, 100, random);
 
      //       BigInteger probable_prime=BigInteger.probablePrime(bitLenght,random);
