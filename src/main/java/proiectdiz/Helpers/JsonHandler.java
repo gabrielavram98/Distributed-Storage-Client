@@ -3,6 +3,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 //import org.json.JSONObject;
 import proiectdiz.Log.Log;
@@ -11,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import proiectdiz.Model.KeyHolder;
+import proiectdiz.Model.Properties;
 import proiectdiz.Model.QuantecKey;
 import proiectdiz.Service.Polynom;
 
@@ -37,35 +39,31 @@ public class JsonHandler {
         }
 
     }
-    public static String[] BodyBuilder(Polynom parts,UUID uuid ){
+    public static String[] BodyBuilder(Polynom[] parts){
 
-        String[] sharesJSON= new String[parts.getY().length];
+        String[] sharesJSON= new String[Properties.getN()];
 
-        //UUID uuid = UUID.randomUUID();
-        parts.setGuid(uuid);
+
+
         ObjectMapper objectMapper = new ObjectMapper();
-
-        for(int i=0;i<parts.getY().length;i++){
+         for(int i=0;i<Properties.getN();i++)
+         {
             ObjectNode body = JsonNodeFactory.instance.objectNode();
-            body.put("GUID",uuid.toString());
+            ArrayNode sharesArray = objectMapper.createArrayNode();
 
+            for( int j=0;j<parts.length;j++){
 
-            ObjectNode shares = objectMapper.createObjectNode();
-            //byte[] x_byte=parts.getX()[i].toByteArray();
-            //String x_string = new String(x_byte, StandardCharsets.UTF_8);
+                ObjectNode share = objectMapper.createObjectNode();
+                share.put("GUID",parts[j].getUUID());
+                share.put("X",parts[j].getX()[i].toString());
+                share.put("Y",parts[j].getY()[i].toString());
+                sharesArray.add(share);
 
-            //byte[] y_bytes=parts.getY()[i].toByteArray();
-            //String y_string = new String(x_byte, StandardCharsets.UTF_8);
-            String x=parts.getX()[i].toString();
-            String y=parts.getY()[i].toString();
-           shares.put("X",x);
-           shares.put("Y",y);
-           body.set("Shares", shares);
+            }
+            body.put("Shares",sharesArray);
             sharesJSON[i]=body.toString();
+    }
 
-
-
-        }
         return sharesJSON;
 
     }

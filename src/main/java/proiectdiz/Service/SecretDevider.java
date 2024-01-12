@@ -53,6 +53,7 @@ public class SecretDevider {
             Polynom polynom = new Polynom(coeficients,p,n,k,secret,bitlength);
             polynom.generateX();
             polynom.generateY();
+            polynom.setGuid(UUID.randomUUID());
             return polynom;
 
 

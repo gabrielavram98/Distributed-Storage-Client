@@ -38,6 +38,9 @@ public class Polynom {
 
 
     }
+    public String getUUID(){
+        return this.guid.toString();
+    }
     private void signs(){
         Random random = new Random();
         for(int i=0;i<k;i++){

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Helpers.PasswordGenerator;
 import proiectdiz.Helpers.ValidationCheck;
+import proiectdiz.Service.BitOperator;
 import proiectdiz.Service.MACAppender;
 import proiectdiz.Service.ProcessSecret;
 
@@ -38,7 +39,7 @@ public class RequestHandler {
         System.arraycopy(stringSecret,0,secret,mac.length,stringSecret.length);
 
 
-        ProcessSecret.Process(secret);
+        //ProcessSecret.Process(secret,);
         return HttpStatus.ACCEPTED;
 
     }
@@ -51,12 +52,12 @@ public class RequestHandler {
         SecretKey password= PasswordGenerator.GeneratePassword();
 
         byte[] secret= MACAppender.AppendMAC(requestBody,password);
-        //System.out.println(new String(secret,StandardCharsets.UTF_8));
+
         byte[] secret_b64=Base64.getEncoder().encode(secret);
-        ///byte[] secret_fromb64=Base64.getDecoder().decode(secret_b64);
-        //System.out.print(new String(secret,StandardCharsets.UTF_8));
-        List<String> uuid_list=ProcessSecret.Process(secret_b64);
+        BigInteger p= BitOperator.generatePrimeP(512);
+        List<String> uuid_list=ProcessSecret.Process(secret_b64,p);
         uuid=UUID.randomUUID().toString();
+        //TODO: Adaugare in baza de date+ prelucrare la partea de storage.
 
 
     }

@@ -20,20 +20,31 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class ProcessSecret {
-    public static List<String> Process(byte[] secret) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, ExecutionException, InterruptedException, InvalidAlgorithmParameterException {
+    public static List<String> Process(byte[] secret, BigInteger p) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, ExecutionException, InterruptedException, InvalidAlgorithmParameterException {
 
 
         List<String> uuid_list= new ArrayList<>();
-        BigInteger p=BitOperator.generatePrimeP(512);
+
         SecretDevider devider= new SecretDevider(p);
+        int parts_lenght=(secret.length/64)+1;
+        Polynom[] parts= new Polynom[parts_lenght];
+        int counter=0;
         for(int i=0;i<secret.length;i+=64){
             int endIndex=Math.min(i+64,secret.length);
             byte[] share= new byte[endIndex-i];
-
             System.arraycopy(secret,i,share,0,share.length);
-            uuid_list.add(DivideAndSend(secret,devider));
+            parts[counter]=devider.Devide(share);
+
+
+            counter++;
+
 
         }
+        DivideAndSend(parts);
+        for(int i=0;i<parts.length;i++){
+            uuid_list.add(parts[i].getUUID());
+        }
+        counter=0;
         return uuid_list;
 
 
@@ -59,13 +70,12 @@ public class ProcessSecret {
 
     }
 
-    private static String DivideAndSend(byte[] secret_share ,SecretDevider devider ) throws InterruptedException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    private static void DivideAndSend(  Polynom[] parts) throws InterruptedException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
 
-        Polynom parts= devider.Devide(secret_share);
-        UUID uuid= UUID.randomUUID();
-        String[] shares= JsonHandler.BodyBuilder(parts,uuid);
+
+        String[] shares= JsonHandler.BodyBuilder(parts );
         String[] key_ids_UUID= KeyHolder.getKeysUUID();
-        QuantecKey[] keys= new QuantecKey[Properties.getN()];
+        //QuantecKey[] keys= new QuantecKey[Properties.getN()];
         ShareJSON[] _sharesJSON= new ShareJSON[Properties.getN()];
         for(int i=0;i<Properties.getN();i++){
             QuantecKey key_= KeyHolder.getKeyByUUID(key_ids_UUID[i]);
@@ -76,7 +86,8 @@ public class ProcessSecret {
         }
         ShareManager manager= new ShareManager();
         manager.SendShares(_sharesJSON);
-        return uuid.toString();
+
     }
+
 
 }
