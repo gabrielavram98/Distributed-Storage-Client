@@ -1,25 +1,20 @@
 package proiectdiz.Model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ser.Serializers;
 import org.springframework.http.HttpStatus;
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Helpers.PasswordGenerator;
 import proiectdiz.Helpers.ValidationCheck;
 import proiectdiz.Log.Log;
+import proiectdiz.Service.MockClass;
 import proiectdiz.Service.BitOperator;
 import proiectdiz.Service.MACAppender;
 import proiectdiz.Service.ProcessSecret;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
-import java.nio.charset.StandardCharsets;
-
-import static java.lang.Character.reverseBytes;
 
 public class RequestHandler {
     private static String uuid="";
@@ -55,10 +50,29 @@ public class RequestHandler {
 
         byte[] secret= MACAppender.AppendMAC(requestBody,password);
 
-        byte[] secret_b64=Base64.getEncoder().encode(secret);
+        //******VERIFICARE MAC ******////
+       // String Request= new String(secret, StandardCharsets.UTF_8);
+       // byte[] secret2=Request.getBytes(StandardCharsets.UTF_8);
+       // boolean isok=MACAppender.VerifyMac(Request,password);
+       // System.out.println(isok);
+
+        //***************************////
+        //byte[] secret_b64=Base64.getEncoder().encode(secret);
         BigInteger p= BitOperator.generatePrimeP(512);
-        List<String> uuid_list=ProcessSecret.Process(secret_b64,p);
+        List<String> uuid_list=ProcessSecret.Process(secret,p);
         uuid=UUID.randomUUID().toString();
+
+
+        //*******MOCK*******//
+        MockClass.setP(p.toString());
+        MockClass.setUuid_list(uuid_list);
+        byte[] keyBytes=password.getEncoded();
+        String encodedkey= Base64.getEncoder().encodeToString(keyBytes);
+        MockClass.setKey(encodedkey);
+       ///***************************************/////
+
+
+
         //TODO: Adaugare in baza de date+ prelucrare la partea de storage.
         //todo: ENCODEAZA PAROLA INAINTE DE A O BAGA IN BAZA
 
@@ -69,8 +83,10 @@ public class RequestHandler {
             if(!ValidationCheck.isValidUUID(requestBody)){
                 throw  new Exception("Error in Validating the request. Not a valid UUID: "+requestBody);
             }
-            String SecretKey="//RETURNSECRETKEYFROMDB";
-            byte[] decodedKey = Base64.getDecoder().decode(SecretKey);
+            String Secret_b64_key=MockClass.getKey();
+            List<String> uuid_list= MockClass.getUuid_list();
+            String p= MockClass.getP();
+
            // SecretKeySpec _secretKeySpec
 
 
