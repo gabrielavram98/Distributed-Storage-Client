@@ -6,11 +6,13 @@ import org.springframework.http.HttpStatus;
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Helpers.PasswordGenerator;
 import proiectdiz.Helpers.ValidationCheck;
+import proiectdiz.Log.Log;
 import proiectdiz.Service.BitOperator;
 import proiectdiz.Service.MACAppender;
 import proiectdiz.Service.ProcessSecret;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -58,6 +60,24 @@ public class RequestHandler {
         List<String> uuid_list=ProcessSecret.Process(secret_b64,p);
         uuid=UUID.randomUUID().toString();
         //TODO: Adaugare in baza de date+ prelucrare la partea de storage.
+        //todo: ENCODEAZA PAROLA INAINTE DE A O BAGA IN BAZA
+
+
+    }
+    public static void HandleRequestForFileDownload(String requestBody){
+        try{
+            if(!ValidationCheck.isValidUUID(requestBody)){
+                throw  new Exception("Error in Validating the request. Not a valid UUID: "+requestBody);
+            }
+            String SecretKey="//RETURNSECRETKEYFROMDB";
+            byte[] decodedKey = Base64.getDecoder().decode(SecretKey);
+           // SecretKeySpec _secretKeySpec
+
+
+        }
+        catch (Exception e){
+            Log.ErrorLog(e.getMessage());
+        }
 
 
     }

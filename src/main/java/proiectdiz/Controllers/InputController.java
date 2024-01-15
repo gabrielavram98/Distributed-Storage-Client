@@ -54,31 +54,23 @@ public class InputController {
     public String processFile(@RequestParam("fileInput") MultipartFile file, Model model) {
         if (!file.isEmpty()) {
             try {
-                // Get the input stream of the uploaded file
+
                 InputStream inputStream = file.getInputStream();
 
-                // Read the content of the file (you can use different mechanisms based on your needs)
+
                 byte[] fileBytes = inputStream.readAllBytes();
                 String fileContent = new String(fileBytes);
                 RequestHandler.Handle(fileContent,"Browser");
                 System.out.println(fileContent);
-                // Process or use the file content as needed
-
-                // Close the input stream
                 inputStream.close();
-
-                // Redirect to a success page or return a response
-               // model.addAttribute("processedText", uuid);
                 return "result";
 
             } catch (Exception e) {
                 Log.ErrorLog(e.getMessage());
-
                 model.addAttribute("ErrorMessage",e.getMessage());
                 return "error";
             }
         } else {
-            // Handle the case where no file is uploaded
             return "noFile";
         }
 
@@ -97,6 +89,38 @@ public class InputController {
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=SecredIdentifier.txt");
         return ResponseEntity.ok().headers(headers).body(content);
     }
+
+    @GetMapping("/uploadUUIDpage")
+    public String upleadUUIDpage(){
+        return "uploadUUIDPage";
+    }
+
+    @PostMapping("/uploadUUIDform")
+    public String uploadUUIDform(@RequestParam("fileInput") MultipartFile file, Model model){
+        if (!file.isEmpty()) {
+            try {
+                InputStream inputStream = file.getInputStream();
+                byte[] fileBytes = inputStream.readAllBytes();
+                String fileContent = new String(fileBytes);
+
+                RequestHandler.HandleRequestForFileDownload(fileContent);
+                System.out.println(fileContent);
+                inputStream.close();
+                return "resultFileBack";
+
+            } catch (Exception e) {
+                Log.ErrorLog(e.getMessage());
+                model.addAttribute("ErrorMessage",e.getMessage());
+                return "error";
+            }
+        } else {
+            return "noFile";
+        }
+
+
+
+    }
+
 
 
 

@@ -8,6 +8,8 @@ import com.networknt.schema.SpecVersion;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
+import java.util.regex.Pattern;
+
 import com.networknt.schema.ValidationMessage;
 
 
@@ -61,5 +63,11 @@ public class ValidationCheck {
         // Check if the length of the hexadecimal string corresponds to a valid AES key length
         int byteLength = hexKey.length() / 2; // Each pair of hexadecimal characters represents a byte
         return byteLength == 16 || byteLength == 24 || byteLength == 32; // 128, 192, or 256 bits
+    }
+
+    public static boolean isValidUUID(String input){
+        String UUID_REGEX = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
+        Pattern UUID_PATTERN = Pattern.compile(UUID_REGEX, Pattern.CASE_INSENSITIVE);
+        return UUID_PATTERN.matcher(input).matches();
     }
 }
