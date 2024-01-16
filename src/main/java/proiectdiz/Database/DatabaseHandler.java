@@ -4,7 +4,16 @@ public class DatabaseHandler {
     private final String Username="gabriel";
     private final String Password="1234asdf";
 
-    private final  String connectionString="jdbc:sqlserver://DESKTOP-D38JBM2:1433;databaseName=ShareStore;encrypt=false";
+    private   String connectionString="jdbc:sqlserver://localhost\\DESKTOP-8P09IFG:1433;database=ShareStorageServer";
+
+
+    public DatabaseHandler(char i){
+        String conn=this.connectionString;
+        conn=conn+i;
+        this.connectionString=conn;
+
+    }
+
 
 
 
