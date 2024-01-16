@@ -26,7 +26,10 @@ public class ProcessSecret {
         List<String> uuid_list= new ArrayList<>();
 
         SecretDevider devider= new SecretDevider(p);
-        int parts_lenght=(secret.length/64)+1;
+        int parts_lenght=(secret.length/64);
+        if((secret.length%64)!=0){
+            parts_lenght++;
+        }
         Polynom[] parts= new Polynom[parts_lenght];
         int counter=0;
         for(int i=0;i<secret.length;i+=64){
