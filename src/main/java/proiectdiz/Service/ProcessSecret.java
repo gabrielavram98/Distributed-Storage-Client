@@ -68,9 +68,6 @@ public class ProcessSecret {
       // System.out.println(convertedString2);
 
 */
-
-
-
     }
 
     private static void DivideAndSend(  Polynom[] parts) throws InterruptedException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
@@ -87,10 +84,26 @@ public class ProcessSecret {
             ShareJSON sharejson= new ShareJSON(_encrypted_,key_.get_keyId(),_encryptor.getIV());
             _sharesJSON[i]=sharejson;
         }
-        ShareManager manager= new ShareManager();
-        manager.SendShares(_sharesJSON);
+
+        ShareManager.SendShares(_sharesJSON);
 
     }
+
+    public static void SendDownloadRequest(List<String> uuids) throws InterruptedException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String request=JsonHandler.CreateDownloadRequest(uuids);
+        String[] key_ids_UUID= KeyHolder.getKeysUUID();
+        ShareJSON[] _sharesJSON= new ShareJSON[Properties.getN()];
+        for(int i=0;i<Properties.getN();i++){
+            QuantecKey key_= KeyHolder.getKeyByUUID(key_ids_UUID[i]);
+            AES _encryptor= new AES(key_.getKey(),request);
+            String _encrypted_=_encryptor.Encrypt();
+            ShareJSON sharejson= new ShareJSON(_encrypted_,key_.get_keyId(),_encryptor.getIV());
+            _sharesJSON[i]=sharejson;
+        }
+        ShareManager.GetShares(_sharesJSON);
+    }
+
+
 
 
 }

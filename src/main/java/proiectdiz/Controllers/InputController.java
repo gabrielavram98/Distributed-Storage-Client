@@ -54,14 +54,16 @@ public class InputController {
     public String processFile(@RequestParam("fileInput") MultipartFile file, Model model) {
         if (!file.isEmpty()) {
             try {
-
+                String filename=file.getOriginalFilename();
                 InputStream inputStream = file.getInputStream();
 
 
                 byte[] fileBytes = inputStream.readAllBytes();
                 String fileContent = new String(fileBytes);
                 RequestHandler.Handle(fileContent,"Browser");
+                RequestHandler.setFilename(filename);
                 System.out.println(fileContent);
+
                 inputStream.close();
                 return "result";
 
@@ -86,7 +88,7 @@ public class InputController {
 
         String content = RequestHandler.returnUUID();
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=SecredIdentifier.txt");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, RequestHandler.returnFilename());
         return ResponseEntity.ok().headers(headers).body(content);
     }
 
@@ -99,6 +101,7 @@ public class InputController {
     public String uploadUUIDform(@RequestParam("fileInput") MultipartFile file, Model model){
         if (!file.isEmpty()) {
             try {
+                String filename=file.getName();
                 InputStream inputStream = file.getInputStream();
                 byte[] fileBytes = inputStream.readAllBytes();
                 String fileContent = new String(fileBytes);
