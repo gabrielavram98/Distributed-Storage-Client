@@ -49,9 +49,7 @@ public class DatabaseHandler {
                             for(String column:columnNames){
                                 results.put(column,resultSet.getObject(column).toString());
                             }
-                            //results.put("P",resultSet.getString("P"));
-                            //results.put("PASSWORD_b64_hash",resultSet.getString("PASSWORD_b64_hash"));
-                            //results.put("UUID_list",resultSet.getString("UUID_list"));
+
                         }
 
                         return results;
