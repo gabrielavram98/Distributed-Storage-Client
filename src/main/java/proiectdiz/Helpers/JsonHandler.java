@@ -11,6 +11,7 @@ import proiectdiz.Log.Log;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import proiectdiz.Model.KeyHolder;
@@ -105,6 +106,37 @@ public class JsonHandler {
         }
         body.put("GUIDs",guidArray);
         return body.toString();
+
+    }
+    public static Optional<String> CreateGetKeyByIdRequest(String _keyID) {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode rootNode = objectMapper.createObjectNode();
+        ArrayNode keyIDsArray = objectMapper.createArrayNode();
+        ObjectNode keyIDObject = objectMapper.createObjectNode();
+        keyIDObject.put("key_ID", _keyID);
+        keyIDsArray.add(keyIDObject);
+        rootNode.set("key_IDs", keyIDsArray);
+        try {
+            String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+            return Optional.of(jsonString);
+
+        } catch (Exception e) {
+            Log.ErrorLog(e.getMessage());
+            return Optional.empty();
+        }
+
+
+    }
+    public static String getKeyFromJson(String response) {
+
+        JsonNode respJSON = StringToJson(response);
+
+
+        JsonNode keysNode = respJSON.get("keys").get(0);
+
+        String key = keysNode.get("key").asText();
+        return key;
 
     }
 }

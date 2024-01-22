@@ -49,65 +49,13 @@ public class KeyRequestService {
                         }
                 );
     }
-////"/org_1_alice/api/v1/keys/org_2_bob/enc_keys"
-    public String getKeys(String jsonValue, String destination, String uuid) {
+
+    public String getKeys(String jsonValue, String destination) {
         return KeyRequestClient.post().uri(destination)
                 .body(BodyInserters.fromValue(jsonValue))
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-            /*
-         KeyRequestClient.post().uri( destination+"enc_keys")
-                .body(BodyInserters.fromValue(jsonValue))
-                .retrieve()
-
-                 .bodyToMono(String.class)
-                 /*
-                 .doOnSuccess( response->{
-                     try {
-                         ValidationCheck.Validate(JsonHandler.StringToJson(response), "src\\\\main\\\\resources\\\\KeyFormatContainerSchema.json");
-                         JsonHandler.ExtractKeyEelements(response, uuid);
-                        // newkey[0] =response;
-                         System.out.println("Response received: " + response);
-                         LockEelement.UnlockMethod();
-
-                         Log.TraceLog("Response received: " + response);
-                     }
-                     catch(Exception e){
-                         throw new RuntimeException(e);
-                     }
-                 })
-                 .doOnError( error ->{
-                     System.err.println("Error occurred: " + error.getMessage());
-                 })
-
-                  */
-        /*
-                 .subscribe(
-
-                         response->{
-                             try {
-                                 ValidationCheck.Validate(JsonHandler.StringToJson(response), "src\\\\main\\\\resources\\\\KeyFormatContainerSchema.json");
-                                 JsonHandler.ExtractKeyEelements(response, uuid);
-                                 System.out.println("Response received: " + response);
-                                 Log.TraceLog("Response received: " + response);
-                             }
-                             catch(Exception e){
-                                 throw new RuntimeException(e);
-                             }
-                         },
-                         error ->{
-                             System.err.println("Error occurred: " + error.getMessage());
-                         },
-                         () -> {
-                             System.out.println("Request completed");
-
-                         }
-
-
-                 );
-
-                 */
 
 
 

@@ -7,10 +7,7 @@ import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Helpers.PasswordGenerator;
 import proiectdiz.Helpers.ValidationCheck;
 import proiectdiz.Log.Log;
-import proiectdiz.Service.MockClass;
-import proiectdiz.Service.BitOperator;
-import proiectdiz.Service.MACAppender;
-import proiectdiz.Service.ProcessSecret;
+import proiectdiz.Service.*;
 
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
@@ -24,7 +21,7 @@ public class RequestHandler {
 
     public static HttpStatus Handle(String requestBody) throws Exception {
         JsonNode requestBodyJSON= JsonHandler.StringToJson(requestBody);
-        if(ValidationCheck.Validate(requestBodyJSON, "src\\main\\resources\\RequestSchema.json")!=0){
+        if(ValidationCheck.Validate(requestBodyJSON, "src\\main\\resources\\RequestSchema.json")){
 
             throw new Exception("Error in Validating the request"+requestBody);
         }
@@ -39,7 +36,6 @@ public class RequestHandler {
         System.arraycopy(stringSecret,0,secret,mac.length,stringSecret.length);
 
 
-        //ProcessSecret.Process(secret,);
         return HttpStatus.ACCEPTED;
 
     }
@@ -138,6 +134,29 @@ public class RequestHandler {
         return filename_;
     }
 
+    public static void AddSharesToHolder(String share) throws Exception {
+
+        if(!ValidationCheck.Validate(JsonHandler.StringToJson(share),"src\\main\\resources\\Share_format.json")){
+            throw  new Exception("Error in Validating the request.Not valid Share format "+share);
+        }
+        ShareHolder.addShare(share);
+        if(ShareHolder.getSharesNumber()==Properties.getL()){
+            synchronized (ShareHolder.getLock()) {
+                ShareHolder.setTaskCompleted();
+                ShareHolder.getLock().notifyAll();
+            }
+        }
+
+    }
+    public static String Reconstruct(){
+        List<String> encrypted_shares=ShareHolder.getShares();
+        List<JsonNode> decrypted_shares= new ArrayList<>();
+        for(String encr_element:encrypted_shares){
+            decrypted_shares.add(ProcessSecret.DecryptShares(encr_element));
+        }
+        return "";
+
+    }
 
 
 

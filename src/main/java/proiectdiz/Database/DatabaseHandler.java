@@ -29,11 +29,15 @@ public class DatabaseHandler {
 
         try (Connection connection = DriverManager.getConnection(connectionString, Username, Password)) {
                 String stored_procedure_string=Create_Stored_Procedure_Call_String(stored_procedure,params.size());
+
+
                 try(CallableStatement callableStatement = connection.prepareCall(stored_procedure_string)){
                     for(int i=1;i<=params.size();i++){
                         callableStatement.setString(i, params.get(i-1));
                     }
                     boolean isResultSet = callableStatement.execute();
+
+
                     if(isResultSet){
                        ResultSet resultSet=callableStatement.getResultSet();
                         Map<String,String> results= new HashMap<>();

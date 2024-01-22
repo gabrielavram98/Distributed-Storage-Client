@@ -86,5 +86,15 @@ public class Properties {
     public static int getL(){
         return 4;
     }
-
+    public static String getDestination(String i){
+        String destination="";
+        try (InputStream input = new FileInputStream(CONFIG_FILE_PATH)) {
+            java.util.Properties properties = new java.util.Properties();
+            properties.load(input);
+            destination=properties.getProperty("destination"+i);
+        }catch (Exception e){
+            Log.ErrorLog(e.getMessage());
+        }
+        return destination;
+    }
 }

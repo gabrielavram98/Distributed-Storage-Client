@@ -1,10 +1,12 @@
 package proiectdiz.Service;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.source.tree.ReturnTree;
 import javafx.scene.control.SplitPane;
 import proiectdiz.Encrypt.AES;
 import proiectdiz.Helpers.JsonHandler;
+import proiectdiz.Log.Log;
 import proiectdiz.Model.DataFormat.ShareJSON;
 import proiectdiz.Model.KeyHolder;
 import proiectdiz.Model.Properties;
@@ -12,6 +14,7 @@ import proiectdiz.Model.QuantecKey;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -103,6 +106,33 @@ public class ProcessSecret {
         ShareManager.GetShares(_sharesJSON);
     }
 
+
+    public static JsonNode DecryptShares(String shareString){
+        JsonNode share= JsonHandler.StringToJson(shareString);
+        String key_ID=share.get("key_ID").asText();
+        String encrypted_share=share.get("share").asText();
+        String IV=share.get("IV").asText();
+        byte[] ivBytes = Base64.getDecoder().decode(IV);
+        String servernumber=share.get("Server").asText();
+        String resp="";
+        try {
+            KeyRequestorById requestor = new KeyRequestorById(key_ID, servernumber);
+
+            requestor.start();
+
+            requestor.join();
+            resp = requestor.getResponse();
+            String key = JsonHandler.getKeyFromJson(resp);
+            AES aes= new AES(key,encrypted_share);
+            aes.setIv(new IvParameterSpec(ivBytes));
+            return JsonHandler.StringToJson(aes.Decrypt());
+        }
+        catch(Exception e){
+            Log.ErrorLog(e.getMessage());
+            return null;
+        }
+
+    }
 
 
 

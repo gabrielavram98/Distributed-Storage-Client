@@ -38,7 +38,7 @@ public class AES {
     }
 
 
-    public  String Encrypt() throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException,
+    public String Encrypt() throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException,
             BadPaddingException, IllegalBlockSizeException {
         SecretKey secret_key= convertBytesToSecretKey(this.key);
         Cipher cipher = Cipher.getInstance(algorithm);
