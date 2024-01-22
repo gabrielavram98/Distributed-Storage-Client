@@ -6,9 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 //import org.json.JSONObject;
+import org.json.JSONArray;
 import proiectdiz.Log.Log;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import proiectdiz.Model.KeyHolder;
@@ -92,7 +95,53 @@ public class JsonHandler {
 
 
     }
+    public static String CreateDownloadRequest(List<String> uuids){
+        ObjectMapper objectMapper= new ObjectMapper();
+        ObjectNode body = JsonNodeFactory.instance.objectNode();
+        ArrayNode guidArray = objectMapper.createArrayNode();
+        for(int i=0;i<uuids.size();i++){
+            ObjectNode guid = objectMapper.createObjectNode();
+            guid.put("GUID",uuids.get(i));
+            guidArray.add(guid);
+        }
+        body.put("GUIDs",guidArray);
+        return body.toString();
+
+    }
+    public static Optional<String> CreateGetKeyByIdRequest(String _keyID) {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode rootNode = objectMapper.createObjectNode();
+        ArrayNode keyIDsArray = objectMapper.createArrayNode();
+        ObjectNode keyIDObject = objectMapper.createObjectNode();
+        keyIDObject.put("key_ID", _keyID);
+        keyIDsArray.add(keyIDObject);
+        rootNode.set("key_IDs", keyIDsArray);
+        try {
+            String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+            return Optional.of(jsonString);
+
+        } catch (Exception e) {
+            Log.ErrorLog(e.getMessage());
+            return Optional.empty();
+        }
+
+
+    }
+    public static String getKeyFromJson(String response) {
+
+        JsonNode respJSON = StringToJson(response);
+
+
+        JsonNode keysNode = respJSON.get("keys").get(0);
+
+        String key = keysNode.get("key").asText();
+        return key;
+
+    }
 }
+
+
  /*
     {
         "keys": [

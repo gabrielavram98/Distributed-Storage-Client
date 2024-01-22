@@ -1,10 +1,12 @@
 package proiectdiz.Service;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.source.tree.ReturnTree;
 import javafx.scene.control.SplitPane;
 import proiectdiz.Encrypt.AES;
 import proiectdiz.Helpers.JsonHandler;
+import proiectdiz.Log.Log;
 import proiectdiz.Model.DataFormat.ShareJSON;
 import proiectdiz.Model.KeyHolder;
 import proiectdiz.Model.Properties;
@@ -12,6 +14,7 @@ import proiectdiz.Model.QuantecKey;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -68,9 +71,6 @@ public class ProcessSecret {
       // System.out.println(convertedString2);
 
 */
-
-
-
     }
 
     private static void DivideAndSend(  Polynom[] parts) throws InterruptedException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
@@ -87,10 +87,53 @@ public class ProcessSecret {
             ShareJSON sharejson= new ShareJSON(_encrypted_,key_.get_keyId(),_encryptor.getIV());
             _sharesJSON[i]=sharejson;
         }
-        ShareManager manager= new ShareManager();
-        manager.SendShares(_sharesJSON);
+
+        ShareManager.SendShares(_sharesJSON);
 
     }
+
+    public static void SendDownloadRequest(List<String> uuids) throws InterruptedException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String request=JsonHandler.CreateDownloadRequest(uuids);
+        String[] key_ids_UUID= KeyHolder.getKeysUUID();
+        ShareJSON[] _sharesJSON= new ShareJSON[Properties.getN()];
+        for(int i=0;i<Properties.getN();i++){
+            QuantecKey key_= KeyHolder.getKeyByUUID(key_ids_UUID[i]);
+            AES _encryptor= new AES(key_.getKey(),request);
+            String _encrypted_=_encryptor.Encrypt();
+            ShareJSON sharejson= new ShareJSON(_encrypted_,key_.get_keyId(),_encryptor.getIV());
+            _sharesJSON[i]=sharejson;
+        }
+        ShareManager.GetShares(_sharesJSON);
+    }
+
+
+    public static JsonNode DecryptShares(String shareString){
+        JsonNode share= JsonHandler.StringToJson(shareString);
+        String key_ID=share.get("key_ID").asText();
+        String encrypted_share=share.get("share").asText();
+        String IV=share.get("IV").asText();
+        byte[] ivBytes = Base64.getDecoder().decode(IV);
+        String servernumber=share.get("Server").asText();
+        String resp="";
+        try {
+            KeyRequestorById requestor = new KeyRequestorById(key_ID, servernumber);
+
+            requestor.start();
+
+            requestor.join();
+            resp = requestor.getResponse();
+            String key = JsonHandler.getKeyFromJson(resp);
+            AES aes= new AES(key,encrypted_share);
+            aes.setIv(new IvParameterSpec(ivBytes));
+            return JsonHandler.StringToJson(aes.Decrypt());
+        }
+        catch(Exception e){
+            Log.ErrorLog(e.getMessage());
+            return null;
+        }
+
+    }
+
 
 
 }

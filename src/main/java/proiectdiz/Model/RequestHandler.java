@@ -2,26 +2,26 @@ package proiectdiz.Model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.http.HttpStatus;
+import proiectdiz.Database.DatabaseHandler;
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Helpers.PasswordGenerator;
 import proiectdiz.Helpers.ValidationCheck;
 import proiectdiz.Log.Log;
-import proiectdiz.Service.MockClass;
-import proiectdiz.Service.BitOperator;
-import proiectdiz.Service.MACAppender;
-import proiectdiz.Service.ProcessSecret;
+import proiectdiz.Service.*;
 
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.sql.ResultSet;
 import java.util.*;
 
 public class RequestHandler {
     private static String uuid="";
+    private static String filename="";
 
     public static HttpStatus Handle(String requestBody) throws Exception {
         JsonNode requestBodyJSON= JsonHandler.StringToJson(requestBody);
-        if(ValidationCheck.Validate(requestBodyJSON, "src\\main\\resources\\RequestSchema.json")!=0){
+        if(ValidationCheck.Validate(requestBodyJSON, "src\\main\\resources\\RequestSchema.json")){
 
             throw new Exception("Error in Validating the request"+requestBody);
         }
@@ -36,7 +36,6 @@ public class RequestHandler {
         System.arraycopy(stringSecret,0,secret,mac.length,stringSecret.length);
 
 
-        //ProcessSecret.Process(secret,);
         return HttpStatus.ACCEPTED;
 
     }
@@ -61,20 +60,28 @@ public class RequestHandler {
         BigInteger p= BitOperator.generatePrimeP(512);
         List<String> uuid_list=ProcessSecret.Process(secret,p);
         uuid=UUID.randomUUID().toString();
-
-
-        //*******MOCK*******//
-        MockClass.setP(p.toString());
-        MockClass.setUuid_list(uuid_list);
+        StringJoiner joiner= new StringJoiner(", ");
+        for(String uuid_elem:uuid_list){
+            joiner.add(uuid_elem);
+        }
         byte[] keyBytes=password.getEncoded();
         String encodedkey= Base64.getEncoder().encodeToString(keyBytes);
-        MockClass.setKey(encodedkey);
+        List<String> param_list= List.of(uuid,MACAppender.HashPassword(encodedkey),p.toString(),joiner.toString());
+        DatabaseHandler db_handler= new DatabaseHandler(Properties.getUsername(), Properties.getPassword(),Properties.getConnectionString());
+        db_handler.ExecuteStoredProcedure(Properties.getInsertProc(), param_list);
+
+        //*******MOCK*******//
+       // MockClass.setP(p.toString());
+       // MockClass.setUuid_list(uuid_list);
+       //byte[] keyBytes=password.getEncoded();
+        //String encodedkey= Base64.getEncoder().encodeToString(keyBytes);
+       // MockClass.setKey(encodedkey);
        ///***************************************/////
 
 
 
-        //TODO: Adaugare in baza de date+ prelucrare la partea de storage.
-        //todo: ENCODEAZA PAROLA INAINTE DE A O BAGA IN BAZA
+
+
 
 
     }
@@ -83,9 +90,20 @@ public class RequestHandler {
             if(!ValidationCheck.isValidUUID(requestBody)){
                 throw  new Exception("Error in Validating the request. Not a valid UUID: "+requestBody);
             }
-            String Secret_b64_key=MockClass.getKey();
-            List<String> uuid_list= MockClass.getUuid_list();
-            String p= MockClass.getP();
+            String UUID=requestBody;
+            DatabaseHandler db_handler= new DatabaseHandler(Properties.getUsername(), Properties.getPassword(),Properties.getConnectionString());
+            List<String> params= List.of(UUID);
+            Map<String,String>results= db_handler.ExecuteStoredProcedure(Properties.getReturnProc(),params);
+            BigInteger p= new BigInteger(results.get("P"));
+            String password_b64= results.get("PASSWORD_b64_hash");
+            List<String> uuid_list=Arrays.asList(results.get("UUID_list").split(","));
+            ProcessSecret.SendDownloadRequest(uuid_list);
+
+            System.out.println(uuid_list);
+
+
+
+
 
            // SecretKeySpec _secretKeySpec
 
@@ -98,14 +116,47 @@ public class RequestHandler {
 
     }
     public static String returnUUID(){
-        String toreturn="";
-        if(!uuid.equals("")){
-            toreturn=uuid;
-            uuid="";
-        }
+        String toreturn=uuid;
+        uuid="";
+
         return toreturn;
     }
 
+    public static void setFilename(String filename) {
+        RequestHandler.filename = filename;
+    }
+
+    public static String returnFilename(){
+        String filename_="attachment; filename="+filename+"UniqueIdentifier.txt";
+
+        filename="";
+
+        return filename_;
+    }
+
+    public static void AddSharesToHolder(String share) throws Exception {
+
+        if(!ValidationCheck.Validate(JsonHandler.StringToJson(share),"src\\main\\resources\\Share_format.json")){
+            throw  new Exception("Error in Validating the request.Not valid Share format "+share);
+        }
+        ShareHolder.addShare(share);
+        if(ShareHolder.getSharesNumber()==Properties.getL()){
+            synchronized (ShareHolder.getLock()) {
+                ShareHolder.setTaskCompleted();
+                ShareHolder.getLock().notifyAll();
+            }
+        }
+
+    }
+    public static String Reconstruct(){
+        List<String> encrypted_shares=ShareHolder.getShares();
+        List<JsonNode> decrypted_shares= new ArrayList<>();
+        for(String encr_element:encrypted_shares){
+            decrypted_shares.add(ProcessSecret.DecryptShares(encr_element));
+        }
+        return "";
+
+    }
 
 
 

@@ -14,7 +14,7 @@ import com.networknt.schema.ValidationMessage;
 
 
 public class ValidationCheck {
-     public static int Validate(JsonNode request, String schema) throws Exception {
+     public static boolean Validate(JsonNode request, String schema) throws Exception {
          ObjectMapper objectMapper = new ObjectMapper();
 
          JsonSchema schemaStream = SchemaLoader.LoadSchemaFromPath( schema );
@@ -25,9 +25,10 @@ public class ValidationCheck {
          }
          if(validationMessage==null)
          {
-             throw new Exception("Error validating the request");
+
+             return false;
          }
-         return 0;
+         return true;
 
 
      }
