@@ -30,7 +30,7 @@ public class KeyRequestorById extends Thread {
 
         if(request.isPresent()){
             String uuid= UUID.randomUUID().toString();
-            response=_keyRequestorById.getKeys(request.get(), "/" + SAE_Masters.values()[Integer.parseInt(server_number)] + "/" + "/api/v1/keys/" + SAE_Slaves.values()[Integer.parseInt(server_number)] + "/dec");
+            response=_keyRequestorById.getKeys(request.get(), "/" + SAE_Masters.values()[Integer.parseInt(server_number)] + "/" + "/api/v1/keys/" + SAE_Slaves.values()[Integer.parseInt(server_number)] + "/dec_keys");
 
             Log.InfoLog(response);
 
