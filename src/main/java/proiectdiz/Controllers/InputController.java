@@ -144,39 +144,20 @@ public class InputController {
     }
 
     @GetMapping("/downloadReconstructedFile")
-    public ResponseEntity<String> downloadReconstructedFile( ) throws InterruptedException, ExecutionException {
+    public ResponseEntity<String> downloadReconstructedFile( ) throws Exception {
 
         //Thread taskThread = new Thread(() -> {
 
         //taskThread.start();
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        // Submitting a Callable task to the executor service
-        Future<String> future = executorService.submit(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                System.out.println("Task starts.");
-                synchronized (ShareHolder.getLock()) {
-                    while (!ShareHolder.isTaskCompleted()) {
-                        ShareHolder.getLock().wait();
-                    }
-                }
-
-
-                // Your code to be executed in the task goes here
-                Thread.sleep(2000);  // Simulating some task
-                System.out.println("Task ends.");
-                return RequestHandler.Reconstruct();
-            }
-        });
-
-        System.out.println("Main thread continues.");
-
-        // Blocking to get the result from the task
-        String result = future.get();
 //        System.out.println("Main thread continues.");
 
         // Wait for the task to complete
+        synchronized (ShareHolder.getLock()) {
+            while (!ShareHolder.isTaskCompleted()) {
+                ShareHolder.getLock().wait();
+            }
+        }
 
         String content = RequestHandler.Reconstruct();
         HttpHeaders headers = new HttpHeaders();

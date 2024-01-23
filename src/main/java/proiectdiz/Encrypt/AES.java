@@ -52,9 +52,10 @@ public class AES {
         SecretKey secret_key= convertBytesToSecretKey(this.key);
         Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.DECRYPT_MODE,secret_key, this.iv);
-        byte[] cipherText = cipher.doFinal(Text);
-        return Base64.getEncoder()
-                .encodeToString(cipherText);
+
+        byte[] plainText = cipher.doFinal(Base64.getDecoder()
+                .decode(this.Text));
+        return new String(plainText);
 
     }
     private static SecretKey convertBytesToSecretKey(byte[] keyBytes) {

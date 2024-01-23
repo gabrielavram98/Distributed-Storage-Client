@@ -4,6 +4,7 @@ package proiectdiz.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.source.tree.ReturnTree;
 import javafx.scene.control.SplitPane;
+import org.springframework.boot.context.properties.bind.BindHandler;
 import proiectdiz.Encrypt.AES;
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Log.Log;
@@ -11,11 +12,14 @@ import proiectdiz.Model.DataFormat.ShareJSON;
 import proiectdiz.Model.KeyHolder;
 import proiectdiz.Model.Properties;
 import proiectdiz.Model.QuantecKey;
+import proiectdiz.Model.ShareHolder;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -39,8 +43,25 @@ public class ProcessSecret {
             int endIndex=Math.min(i+64,secret.length);
             byte[] share= new byte[endIndex-i];
             System.arraycopy(secret,i,share,0,share.length);
-            parts[counter]=devider.Devide(share);
 
+            System.out.println(new String(share, StandardCharsets.UTF_8));
+            ///byte[] what="wiefbwiefbwenfw".getBytes();
+            BigInteger what_big= new BigInteger(share);
+
+            parts[counter]=devider.Devide(share);
+            //Polynom poly=devider.Devide(what);
+            //Lagrange lag= new Lagrange( parts[counter].getX(),parts[counter].getY() ,p,Properties.getL());
+            //BigInteger reconstructed=lag.lagrangeInterpolation();
+            //if(what_big.signum()<0){
+            //    byte[] reconstructed2=reconstructed.subtract(p).toByteArray();
+            //    String convertedString2 = new String(reconstructed2, StandardCharsets.UTF_8);
+            //    System.out.println(convertedString2);
+           // }
+           // else{
+           //     byte[] reconstructedBytes=reconstructed.toByteArray();
+           //     String convertedString = new String(reconstructedBytes, StandardCharsets.UTF_8);
+           //     System.out.println(convertedString);
+           // }
 
             counter++;
 
@@ -110,7 +131,7 @@ public class ProcessSecret {
     public static JsonNode DecryptShares(String shareString){
         JsonNode share= JsonHandler.StringToJson(shareString);
         String key_ID=share.get("key_ID").asText();
-        String encrypted_share=share.get("share").asText();
+        String encrypted_share=share.get("Shares").asText();
         String IV=share.get("IV").asText();
         byte[] ivBytes = Base64.getDecoder().decode(IV);
         String servernumber=share.get("Server").asText();

@@ -16,9 +16,9 @@ public class SecretDevider {
     BigInteger[] coeficients;
     BigInteger p;
     public SecretDevider(BigInteger p){
-        Properties properties= new Properties();
-        n=7;
-        k=5;
+        //Properties properties= new Properties();
+        n= Properties.getN();
+        k=Properties.getL();
         coeficients=BitOperator.generateCoeficientsModP(p,k,p.bitLength());
         this.p=p;
 
