@@ -63,17 +63,17 @@ public class Polynom {
 
     public void generateY(){
 
-        for (int i = 1; i <= n; i++) {
+        for (int i = 0; i < n; i++) {
             BigInteger accum = secret.mod(p);
 
-            for (int j = 1; j < k; j++) {
-                final BigInteger t1 = BigInteger.valueOf(i).modPow(BigInteger.valueOf(j), p);
-                final BigInteger t2 = coefficients[j - 1].multiply(t1).mod(p);
+            for (int j = 0; j < k-1; j++) {
+                final BigInteger t1 = x[i].modPow(BigInteger.valueOf(j+1), p);
+                final BigInteger t2 = coefficients[j].multiply(t1).mod(p);
 
                 accum = accum.add(t2).mod(p);
             }
-            y[i - 1] = accum;
-            System.out.println("Y:"+ i +":"+y[i-1]);
+            y[i] = accum;
+            System.out.println("Y:"+ i+1 +":"+y[i]);
 
         }
 

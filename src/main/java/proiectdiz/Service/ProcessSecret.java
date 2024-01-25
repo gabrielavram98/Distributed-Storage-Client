@@ -49,18 +49,19 @@ public class ProcessSecret {
             BigInteger what_big= new BigInteger(share);
 
             parts[counter]=devider.Devide(share);
-            //Polynom poly=devider.Devide(what);
+            Polynom poly=devider.Devide(share);
             //Lagrange lag= new Lagrange( parts[counter].getX(),parts[counter].getY() ,p,Properties.getL());
-            //BigInteger reconstructed=lag.lagrangeInterpolation();
-            //if(what_big.signum()<0){
+            Lagrange lag= new Lagrange( poly.getX(),poly.getY() ,p,Properties.getL());
+            BigInteger reconstructed=lag.lagrangeInterpolation();
+           // if(what_big.signum()<0){
             //    byte[] reconstructed2=reconstructed.subtract(p).toByteArray();
             //    String convertedString2 = new String(reconstructed2, StandardCharsets.UTF_8);
             //    System.out.println(convertedString2);
            // }
            // else{
-           //     byte[] reconstructedBytes=reconstructed.toByteArray();
-           //     String convertedString = new String(reconstructedBytes, StandardCharsets.UTF_8);
-           //     System.out.println(convertedString);
+                byte[] reconstructedBytes=reconstructed.toByteArray();
+                String convertedString = new String(reconstructedBytes, StandardCharsets.UTF_8);
+                System.out.println(convertedString);
            // }
 
             counter++;

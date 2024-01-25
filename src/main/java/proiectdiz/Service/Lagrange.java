@@ -3,6 +3,9 @@ package proiectdiz.Service;
 //import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 //import org.apache.commons.math3.analysis.solvers.PolynomialSolver;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Lagrange {
     private BigInteger[] x;
@@ -23,25 +26,14 @@ public class Lagrange {
 
     public BigInteger lagrangeInterpolation() {
 
-/*
-        Fraction ans= new Fraction(new BigInteger("0"),new BigInteger("1"));
-
-        for (int i = 0; i < k; i++) {
-
-            Fraction L= new Fraction(y[i],new BigInteger("1"));
-            for (int j = 0; j < k; j++) {
-                if (j != i) {
-                        Fraction temp= new Fraction(x[j].multiply(new BigInteger("-1")),x[i].subtract(x[j]));
-                        L.MultiplyOp(temp,p);
-
-                }
-            }
-            ans.Add(L,p);
-        }
-
-        return ans.getNuminator();
-    }
-    */
+        List<BigInteger> shuffle_list_x=  new ArrayList<>(Arrays.asList(x));
+        List<BigInteger> shuffle_list_y=  new ArrayList<>(Arrays.asList(y));
+        BigInteger x2=shuffle_list_x.get(2);
+        shuffle_list_x.set(2,shuffle_list_x.get(3));
+        shuffle_list_x.set(3,x2);
+        BigInteger y2=shuffle_list_y.get(2);
+        shuffle_list_y.set(2,shuffle_list_y.get(3));
+        shuffle_list_y.set(3,y2);
 
         BigInteger accum = BigInteger.ZERO;
         for (int i = 0; i < k; i++) {
@@ -50,8 +42,8 @@ public class Lagrange {
 
             for (int j = 0; j < k; j++) {
                 if (i != j) {
-                    num = num.multiply(BigInteger.valueOf(-j - 1)).mod(p);
-                    den = den.multiply(BigInteger.valueOf(i - j)).mod(p);
+                    num = num.multiply(x[j].multiply(BigInteger.valueOf(-1))).mod(p);
+                    den = den.multiply(x[i].subtract(x[j])).mod(p);
                 }
             }
 

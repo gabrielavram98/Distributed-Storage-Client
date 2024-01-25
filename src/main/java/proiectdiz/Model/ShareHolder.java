@@ -9,12 +9,12 @@ public class ShareHolder {
     private static final Object lock = new Object();
     private static  BigInteger p=null;
     private static   String Password=null;
+    private static String file_name=null;
 
   private static boolean taskCompleted=false;
 
     public static void addShare(String share){
          shares.add(share);
-
     }
 
     public static int getSharesNumber(){
@@ -41,8 +41,12 @@ public class ShareHolder {
     }
     public static void clear(){
         shares.clear();
-        p=p.xor(p);
+        if(p!=null){
+            p=p.xor(p);
+        }
+
         Password="";
+        file_name="";
     }
 
     public static void setP(BigInteger p) {
@@ -53,6 +57,14 @@ public class ShareHolder {
         Password = password;
     }
 
+    public static void setFile_name(String file_name) {
+        ShareHolder.file_name = file_name;
+    }
+
+    public static String getFile_name() {
+        return file_name;
+    }
+
     public static BigInteger getP() {
         return p;
     }
@@ -61,7 +73,4 @@ public class ShareHolder {
         return Password;
     }
 
-    public static void setTaskCompleted(boolean taskCompleted) {
-        ShareHolder.taskCompleted = taskCompleted;
-    }
 }

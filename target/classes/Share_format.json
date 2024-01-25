@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "key_ID": {
+      "type": "string",
+      "description": "A string representing the key ID."
+    },
+    "share": {
+      "type": "string",
+      "description": "A string representing the share."
+    },
+    "IV": {
+      "type": "string",
+      "description": "A string representing the share."
+    }
+  },
+  "required": ["key_ID", "share"],
+  "additionalProperties": false
+}
