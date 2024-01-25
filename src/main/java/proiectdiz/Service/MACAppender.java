@@ -67,14 +67,14 @@ public class MACAppender {
         return mac_Request.getBytes(StandardCharsets.UTF_8);
     }
 
-    public static boolean VerifyMac(String Request, SecretKey password) throws NoSuchAlgorithmException, InvalidKeyException {
+    public static boolean VerifyMac(String Request, String encodedkey) throws NoSuchAlgorithmException, InvalidKeyException {
 
         //byte[] keyBytes=password.getEncoded();
         //String encodedb64key= Base64.getEncoder().encodeToString(keyBytes);
-        byte[] keyBytes=password.getEncoded();
-        String encodedkey= Base64.getEncoder().encodeToString(keyBytes);
-        byte[] keyBytes2 = Base64.getDecoder().decode(encodedkey);
-        SecretKey secretKey = new SecretKeySpec(keyBytes2, 0, keyBytes2.length, "HmacSHA256");
+        //byte[] keyBytes=password.getEncoded();
+        //String encodedkey= Base64.getEncoder().encodeToString(keyBytes);
+        byte[] keyBytes = Base64.getDecoder().decode(encodedkey);
+        SecretKey secretKey = new SecretKeySpec(keyBytes, 0, keyBytes.length, "HmacSHA256");
 
 
         Mac mac=Mac.getInstance("HmacSHA256");
