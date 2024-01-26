@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class PropertiesApp {
 
-    @Value("myapp.n")
+    @Value("${myapp.n}")
     private String n;
-    @Value("myapp.l")
+    @Value("${myapp.l}")
     private String l;
 
     public String getN() {

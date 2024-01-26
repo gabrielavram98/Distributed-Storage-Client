@@ -21,6 +21,7 @@ public class RequestHandler {
     private static String uuid="";
 
     private static String Password="";
+    private static String filename="";
 
 
 
@@ -40,7 +41,7 @@ public class RequestHandler {
         for(String uuid_elem:uuid_list){
             joiner.add(uuid_elem);
         }
-        List<String> param_list= List.of(uuid,MACAppender.HashPassword(Password),p.toString(),joiner.toString(),filename);
+        List<String> param_list= List.of(uuid,MACAppender.HashPassword(Password),p.toString(),joiner.toString(),filename,String.valueOf(Properties.getN()),String.valueOf(Properties.getL()));
         DatabaseHandler db_handler= new DatabaseHandler(Properties.getUsername(), Properties.getPassword(),Properties.getConnectionString());
         db_handler.ExecuteStoredProcedure(Properties.getInsertProc(), param_list);
         ShareHolder.setFile_name(filename);
@@ -52,6 +53,9 @@ public class RequestHandler {
 
 
 
+    }
+    public static void setFilename(String filename){
+        RequestHandler.filename=filename;
     }
     public static void HandleRequestForFileDownload(String requestBody){
 
@@ -71,7 +75,8 @@ public class RequestHandler {
             Map<String,String>results= db_handler.ExecuteStoredProcedure(Properties.getReturnProc(),params);
             BigInteger p= new BigInteger(results.get("P"));
             String password_b64_hash= results.get("PASSWORD_b64_hash");
-
+            Properties.setN(results.get("n"));
+            Properties.setL(results.get("l"));
 
             /////Verify password integrity
             String file_password_hash= MACAppender.HashPassword(Password_from_file);
@@ -108,7 +113,7 @@ public class RequestHandler {
     }
 
    public static String returnFilenameUID(){
-        String filenameuuid=ShareHolder.getFile_name()+"UniqueIdentifier";
+        String filenameuuid=ShareHolder.getFile_name()+"UniqueIdentifier.txt";
         ShareHolder.clear();
         return filenameuuid;
    }
@@ -131,7 +136,7 @@ public class RequestHandler {
         }
 
     }
-    public static String Reconstruct() throws Exception {
+    public static Map<String,String> Reconstruct() throws Exception {
         List<String> encrypted_shares=ShareHolder.getShares();
         List<JsonNode> decrypted_shares= new ArrayList<>();
 
@@ -187,8 +192,11 @@ public class RequestHandler {
 
 
         if(MACAppender.VerifyMac(concatenated_MAC_string,ShareHolder.getPassword())){
+            Map<String,String> result= new HashMap<>();
+            result.put("Content",concatenated_MAC_string.substring(44));
+            result.put("filename",ShareHolder.getFile_name());
             ShareHolder.clear();
-            return concatenated_MAC_string.substring(44);
+            return result ;
         }
         else{
             return null;
@@ -197,21 +205,7 @@ public class RequestHandler {
 
 
     }
-    public static boolean isBase64(String input) {
-        try {
-            // Decode the input as Base64
-            byte[] decodedBytes = Base64.getDecoder().decode(input);
 
-            // Encode the decoded bytes back to Base64
-            String reencoded = Base64.getEncoder().encodeToString(decodedBytes);
-
-            // Check if the reencoded string matches the original input
-            return input.equals(reencoded);
-        } catch (IllegalArgumentException e) {
-            // If an exception occurs during decoding, it is not valid Base64
-            return false;
-        }
-    }
 
 
 

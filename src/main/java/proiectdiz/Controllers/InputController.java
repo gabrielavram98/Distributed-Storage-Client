@@ -1,5 +1,6 @@
 package proiectdiz.Controllers;
 
+import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import proiectdiz.Log.Log;
+import proiectdiz.Model.Properties;
 import proiectdiz.Model.PropertiesApp;
 import proiectdiz.Model.RequestHandler;
 import proiectdiz.Model.ShareHolder;
@@ -20,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.concurrent.*;
 
 @Controller
@@ -27,23 +30,7 @@ public class InputController {
     @Autowired
     private PropertiesApp propertiesApp;
 
-    @PostMapping("/store")
-    public HttpStatus hello(@RequestBody String requestBody) {
-        try{
-            Log.TraceLog(requestBody);
 
-
-            return RequestHandler.Handle(requestBody);
-        }
-        catch(Exception e){
-            Log.ErrorLog(e.getMessage());
-            return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-
-
-
-
-    }
 
     @PostMapping("/gatherShares")
     public HttpStatus Receive_shares_from_servers(@RequestBody String shareBody){
@@ -67,18 +54,21 @@ public class InputController {
 
 
     @PostMapping("/upload-file")
-    public String processFile(@RequestParam("fileInput") MultipartFile file, Model model) {
+    public String processFile(@RequestParam("fileInput") MultipartFile file, Model model,@RequestParam("n") int n,
+                              @RequestParam("l") int l) {
         if (!file.isEmpty()) {
             try {
+                Properties.setN(String.valueOf(n));
+                Properties.setL(String.valueOf(l));
                 String filename=file.getOriginalFilename();
                 InputStream inputStream = file.getInputStream();
 
 
                 byte[] fileBytes = inputStream.readAllBytes();
                 String fileContent = new String(fileBytes);
-                RequestHandler.Handle(fileContent,"Browser");
-                RequestHandler.setFilename(filename);
-                System.out.println(fileContent);
+                RequestHandler.Handle(fileContent,filename);
+               // RequestHandler.setFilename(filename);
+                //System.out.println(fileContent);
 
                 inputStream.close();
                 return "result";
@@ -99,13 +89,16 @@ public class InputController {
 
 
     @GetMapping("/downloadFile")
-    public ResponseEntity<String> generateAndDownloadFile( ) {
+    public ResponseEntity<byte[]> generateAndDownloadFile( ) {
 
+        String content = RequestHandler.returnData();
+        String filename = RequestHandler.returnFilenameUID();
 
-        String content = RequestHandler.returnUUID();
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, RequestHandler.returnFilename());
-        return ResponseEntity.ok().headers(headers).body(content);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", filename);
+
+        return new ResponseEntity<>(content.getBytes(), headers, HttpStatus.OK);
     }
 
     @GetMapping("/uploadUUIDpage")
@@ -117,13 +110,13 @@ public class InputController {
     public String uploadUUIDform(@RequestParam("fileInput") MultipartFile file, Model model){
         if (!file.isEmpty()) {
             try {
-                String filename=file.getName();
+
                 InputStream inputStream = file.getInputStream();
                 byte[] fileBytes = inputStream.readAllBytes();
                 String fileContent = new String(fileBytes);
 
                 RequestHandler.HandleRequestForFileDownload(fileContent);
-                System.out.println(fileContent);
+
                 inputStream.close();
                 return "redirect:download";
 
@@ -144,29 +137,25 @@ public class InputController {
     }
 
     @GetMapping("/downloadReconstructedFile")
-    public ResponseEntity<String> downloadReconstructedFile( ) throws Exception {
+    public ResponseEntity<byte[]> downloadReconstructedFile( ) throws Exception {
 
-        //Thread taskThread = new Thread(() -> {
-
-        //taskThread.start();
-
-//        System.out.println("Main thread continues.");
-
-        // Wait for the task to complete
         synchronized (ShareHolder.getLock()) {
             while (!ShareHolder.isTaskCompleted()) {
                 ShareHolder.getLock().wait();
             }
         }
 
-        String content = RequestHandler.Reconstruct();
+        Map<String,String> result = RequestHandler.Reconstruct();
+
+
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, RequestHandler.returnFilename());
-        return ResponseEntity.ok().headers(headers).body(content);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", result.get("filename"));
+
+        return new ResponseEntity<>(result.get("Content").getBytes(), headers, HttpStatus.OK);
     }
 
 
 
 
 }
-
