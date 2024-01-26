@@ -26,7 +26,7 @@ public class KeyRequestService {
                 .build();
     }
 
-    ;
+
     public void getStatus(String jsonValue) {
         Object mapper=
         KeyRequestClient.get().uri("/org_1_alice/api/v1/keys/org_2_bob/status")

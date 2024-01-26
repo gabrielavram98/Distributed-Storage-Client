@@ -15,9 +15,7 @@ public class Lagrange {
 
     public Lagrange(BigInteger[] x, BigInteger[] y, BigInteger p, int k){
         this.x=x;
-        //this.x = new BigInteger[]{BigInteger.valueOf(20), BigInteger.valueOf(23), BigInteger.valueOf(21),BigInteger.valueOf(13)};
-        //this.y = new BigInteger[]{BigInteger.valueOf(1554), BigInteger.valueOf(1542), BigInteger.valueOf(1510),BigInteger.valueOf(1582)};
-        //SECRET IS 1634
+
         this.y=y;
         this.p=p;
         this.k=k;
@@ -26,14 +24,7 @@ public class Lagrange {
 
     public BigInteger lagrangeInterpolation() {
 
-        List<BigInteger> shuffle_list_x=  new ArrayList<>(Arrays.asList(x));
-        List<BigInteger> shuffle_list_y=  new ArrayList<>(Arrays.asList(y));
-        BigInteger x2=shuffle_list_x.get(2);
-        shuffle_list_x.set(2,shuffle_list_x.get(3));
-        shuffle_list_x.set(3,x2);
-        BigInteger y2=shuffle_list_y.get(2);
-        shuffle_list_y.set(2,shuffle_list_y.get(3));
-        shuffle_list_y.set(3,y2);
+
 
         BigInteger accum = BigInteger.ZERO;
         for (int i = 0; i < k; i++) {

@@ -8,18 +8,16 @@ import proiectdiz.Log.Log;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-@Component
+
 public class Properties {
 
-    @Value("${myapp.n}")
-    private String n;
+
+    public static String n;
 
 
-    @Autowired
-    private Environment env;
 
-    @Value("${myapp.l}")
-    private String l;
+
+    public static String l;
 
     private static final String CONFIG_FILE_PATH = "config.properties";
 
@@ -81,10 +79,19 @@ public class Properties {
     }
 
     public static int getN(){
-        return 6;
+        return Integer.parseInt(n);
     }
+
+    public static void setN(String n) {
+        Properties.n = n;
+    }
+
+    public static void setL(String l) {
+        Properties.l = l;
+    }
+
     public static int getL(){
-        return 4;
+        return Integer.parseInt(l);
     }
     public static String getDestination(String i){
         String destination="";
