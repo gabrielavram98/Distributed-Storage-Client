@@ -1,6 +1,7 @@
 package proiectdiz.Controllers;
 
 import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
+import com.sun.source.tree.TryTree;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -32,19 +33,10 @@ public class InputController {
 
 
 
-    @PostMapping("/gatherShares")
-    public HttpStatus Receive_shares_from_servers(@RequestBody String shareBody){
-        try{
-            Log.TraceLog(shareBody);
-            RequestHandler.AddSharesToHolder(shareBody);
-            return HttpStatus.ACCEPTED;
-        }
-        catch(Exception e){
-            Log.ErrorLog(e.getMessage());
-            return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
 
-    }
+
+
+
 
     @GetMapping("/text-input")
     public String showTextInputForm() {
@@ -90,19 +82,25 @@ public class InputController {
 
     @GetMapping("/downloadFile")
     public ResponseEntity<byte[]> generateAndDownloadFile( ) {
+        try{
+            String content = RequestHandler.returnData();
+            String filename = RequestHandler.returnFilenameUID();
 
-        String content = RequestHandler.returnData();
-        String filename = RequestHandler.returnFilenameUID();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", filename);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", filename);
+            return new ResponseEntity<>(content.getBytes(), headers, HttpStatus.OK);
+        }catch (Exception e){
+            Log.ErrorLog(e.getMessage());
+            return null;
+        }
 
-        return new ResponseEntity<>(content.getBytes(), headers, HttpStatus.OK);
     }
 
     @GetMapping("/uploadUUIDpage")
     public String upleadUUIDpage(){
+        System.out.println("A intrat in /uploadUUIDPage");
         return "uploadUUIDPage";
     }
 
@@ -110,7 +108,7 @@ public class InputController {
     public String uploadUUIDform(@RequestParam("fileInput") MultipartFile file, Model model){
         if (!file.isEmpty()) {
             try {
-
+                System.out.println("A intrat in /uploadUUIDForm");
                 InputStream inputStream = file.getInputStream();
                 byte[] fileBytes = inputStream.readAllBytes();
                 String fileContent = new String(fileBytes);
@@ -133,26 +131,34 @@ public class InputController {
 
     @GetMapping("/download")
     public String download(){
+        System.out.println("A fost redirectionat in /download");
         return "resultFileBack";
     }
 
     @GetMapping("/downloadReconstructedFile")
-    public ResponseEntity<byte[]> downloadReconstructedFile( ) throws Exception {
-
-        synchronized (ShareHolder.getLock()) {
-            while (!ShareHolder.isTaskCompleted()) {
-                ShareHolder.getLock().wait();
+    public ResponseEntity<byte[]> downloadReconstructedFileFunction( ) throws Exception {
+        try{
+            System.out.println("A fost redirectionat in /downloadReconstructedFile");
+            synchronized (ShareHolder.getLock()) {
+               if(!ShareHolder.isTaskCompleted()) {
+                    System.out.println("SHARES NUMBER"+ShareHolder.getSharesNumber());
+                    ShareHolder.getLock().wait();
+                }
             }
+
+            Map<String,String> result = RequestHandler.Reconstruct();
+
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", result.get("filename"));
+
+            return new ResponseEntity<>(result.get("Content").getBytes(), headers, HttpStatus.OK);
+        }catch (Exception e){
+            Log.ErrorLog(e.getMessage());
+            return null;
         }
 
-        Map<String,String> result = RequestHandler.Reconstruct();
-
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", result.get("filename"));
-
-        return new ResponseEntity<>(result.get("Content").getBytes(), headers, HttpStatus.OK);
     }
 
 

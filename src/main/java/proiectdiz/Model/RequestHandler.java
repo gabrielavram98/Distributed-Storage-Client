@@ -127,19 +127,27 @@ public class RequestHandler {
         if(!ValidationCheck.Validate(JsonHandler.StringToJson(share),"src\\main\\resources\\Share_format.json")){
             throw  new Exception("Error in Validating the request.Not valid Share format "+share);
         }
-        ShareHolder.addShare(share);
+       // synchronized (ShareHolder.getLock()) {
+            System.out.println("\n\nA INTRAT IN BLOCK\n\n");
+            ShareHolder.addShare(share);
+          ///  ShareHolder.getLock().notifyAll();
+      //  }
+      //  //ShareHolder.addShare(share);
+
         if(ShareHolder.getSharesNumber()==Properties.getL()){
             synchronized (ShareHolder.getLock()) {
                 ShareHolder.setTaskCompleted();
                ShareHolder.getLock().notifyAll();
             }
+            //ShareHolder.setTaskUncompleted();
         }
 
     }
     public static Map<String,String> Reconstruct() throws Exception {
+
         List<String> encrypted_shares=ShareHolder.getShares();
         List<JsonNode> decrypted_shares= new ArrayList<>();
-
+        ShareHolder.setTaskUncompleted();
         for(int i=0;i<encrypted_shares.size();i++){
             decrypted_shares.add(ProcessSecret.DecryptShares(encrypted_shares.get(i)));
         }

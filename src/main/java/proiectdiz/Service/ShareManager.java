@@ -34,7 +34,7 @@ public class ShareManager {
 
     public static void GetShares(ShareJSON[] request ){
         try{
-            int n= Properties.getL();
+            int n= Properties.getN();
             ShareSender[] senders= new ShareSender[n];
             for(int i=0;i<n;i++){
                 ShareSender sender= new ShareSender(request[i],i,"/get");
