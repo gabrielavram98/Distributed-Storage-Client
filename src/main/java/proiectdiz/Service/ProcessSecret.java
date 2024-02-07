@@ -2,17 +2,17 @@ package proiectdiz.Service;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.sun.source.tree.ReturnTree;
-import javafx.scene.control.SplitPane;
-import org.springframework.boot.context.properties.bind.BindHandler;
 import proiectdiz.Encrypt.AES;
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Log.Log;
 import proiectdiz.Model.DataFormat.ShareJSON;
-import proiectdiz.Model.KeyHolder;
-import proiectdiz.Model.Properties;
-import proiectdiz.Model.QuantecKey;
-import proiectdiz.Model.ShareHolder;
+import proiectdiz.Encrypt.KeyHolder;
+import proiectdiz.Helpers.Properties;
+import proiectdiz.Encrypt.QuantecKey;
+import proiectdiz.SenderServices.KeyRequestorById;
+import proiectdiz.ShamirScheme.Lagrange;
+import proiectdiz.ShamirScheme.Polynom;
+import proiectdiz.ShamirScheme.SecretDevider;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class ProcessSecret {
-    public static List<String> Process(byte[] secret, BigInteger p) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, ExecutionException, InterruptedException, InvalidAlgorithmParameterException {
+    public static List<String> Process(byte[] secret, BigInteger p) throws Exception {
 
 
         List<String> uuid_list= new ArrayList<>();
@@ -43,30 +43,9 @@ public class ProcessSecret {
             int endIndex=Math.min(i+64,secret.length);
             byte[] share= new byte[endIndex-i];
             System.arraycopy(secret,i,share,0,share.length);
-
             System.out.println(new String(share, StandardCharsets.UTF_8));
-            ///byte[] what="wiefbwiefbwenfw".getBytes();
-            BigInteger what_big= new BigInteger(share);
-
             parts[counter]=devider.Devide(share);
-            Polynom poly=devider.Devide(share);
-            //Lagrange lag= new Lagrange( parts[counter].getX(),parts[counter].getY() ,p,Properties.getL());
-            Lagrange lag= new Lagrange( poly.getX(),poly.getY() ,p,Properties.getL());
-            BigInteger reconstructed=lag.lagrangeInterpolation();
-           // if(what_big.signum()<0){
-            //    byte[] reconstructed2=reconstructed.subtract(p).toByteArray();
-            //    String convertedString2 = new String(reconstructed2, StandardCharsets.UTF_8);
-            //    System.out.println(convertedString2);
-           // }
-           // else{
-                byte[] reconstructedBytes=reconstructed.toByteArray();
-                String convertedString = new String(reconstructedBytes, StandardCharsets.UTF_8);
-                System.out.println(convertedString);
-           // }
-
             counter++;
-
-
         }
         DivideAndSend(parts);
         for(int i=0;i<parts.length;i++){
@@ -75,27 +54,9 @@ public class ProcessSecret {
         counter=0;
         return uuid_list;
 
-
-
-
-
-
-/*
-
-        Lagrange lag= new Lagrange(parts.getX(), parts.getY(),parts.getP(),parts.getK());
-        BigInteger reconstructed=lag.lagrangeInterpolation();
-        byte[] reconstructedBytes=reconstructed.toByteArray();
-    //    byte[] reconstructed2=reconstructed.subtract(parts.getP()).toByteArray();
-        String convertedString = new String(reconstructedBytes, StandardCharsets.UTF_8);
-        System.out.println(convertedString);
-
-       // String convertedString2 = new String(reconstructed2, StandardCharsets.UTF_8);
-      // System.out.println(convertedString2);
-
-*/
     }
 
-    private static void DivideAndSend(  Polynom[] parts) throws InterruptedException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    private static void DivideAndSend(  Polynom[] parts) throws Exception {
 
 
         String[] shares= JsonHandler.BodyBuilder(parts );

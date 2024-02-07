@@ -1,14 +1,11 @@
-package proiectdiz.Service;
+package proiectdiz.ShamirScheme;
 
-import proiectdiz.Model.Properties;
+import proiectdiz.Helpers.Properties;
 
-import java.lang.reflect.Array;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.core.env.Environment;
+
+import proiectdiz.Validation.BitOperator;
 
 public class SecretDevider {
     int n;
@@ -19,12 +16,12 @@ public class SecretDevider {
 
         n = Properties.getN();
         k=Properties.getL();
-        coeficients=BitOperator.generateCoeficientsModP(p,k,p.bitLength());
+        coeficients= BitOperator.generateCoeficientsModP(p,k,p.bitLength());
         this.p=p;
 
     }
 
-    public  Polynom Devide(byte[] secret){
+    public Polynom Devide(byte[] secret){
 
 
         BigInteger BigIntegerSecret= new BigInteger(secret);

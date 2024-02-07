@@ -2,13 +2,14 @@ package proiectdiz.Service;
 
 import proiectdiz.Log.Log;
 import proiectdiz.Model.DataFormat.ShareJSON;
-import proiectdiz.Model.Properties;
+import proiectdiz.Helpers.Properties;
+import proiectdiz.SenderServices.ShareSender;
 
 public class ShareManager {
 
     public ShareManager(){}
 
-    public static void SendShares(ShareJSON[] shares){
+    public static void SendShares(ShareJSON[] shares) throws Exception {
 
         try{
             int n= Properties.getN();
@@ -28,6 +29,7 @@ public class ShareManager {
 
         }catch(Exception e){
             Log.ErrorLog(e.getMessage());
+            throw new Exception(e.getMessage());
         }
 
     }

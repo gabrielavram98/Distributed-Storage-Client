@@ -1,10 +1,6 @@
 package proiectdiz.Controllers;
 
-import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
-import com.sun.source.tree.TryTree;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,17 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import proiectdiz.Log.Log;
-import proiectdiz.Model.Properties;
+import proiectdiz.Helpers.Properties;
 import proiectdiz.Model.PropertiesApp;
-import proiectdiz.Model.RequestHandler;
+import proiectdiz.Service.RequestHandler;
 import proiectdiz.Model.ShareHolder;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.concurrent.*;
 
 @Controller
 public class InputController {

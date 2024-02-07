@@ -1,7 +1,9 @@
-package proiectdiz.Model;
+package proiectdiz.Encrypt;
 
+import proiectdiz.Encrypt.QuantecKey;
+import proiectdiz.Helpers.Properties;
 import proiectdiz.Log.Log;
-import proiectdiz.Service.KeyRequestor;
+import proiectdiz.SenderServices.KeyRequestor;
 
 import java.util.*;
 
@@ -48,9 +50,9 @@ public class KeyHolder {
 
     public static String[] getKeysUUID() throws InterruptedException {
         //Map<Integer,String> keys= new HashMap<>();
-        String[] guid= new String[Properties.getN()];
-        KeyRequestor[] requests= new KeyRequestor[Properties.getN()];
-        for(int i = 0; i< Properties.getN(); i++) {
+        String[] guid= new String[proiectdiz.Helpers.Properties.getN()];
+        KeyRequestor[] requests= new KeyRequestor[proiectdiz.Helpers.Properties.getN()];
+        for(int i = 0; i< proiectdiz.Helpers.Properties.getN(); i++) {
             try{
                 guid[i]= UUID.randomUUID().toString();
                 KeyRequestor req= new KeyRequestor(guid[i],i);
@@ -59,7 +61,7 @@ public class KeyHolder {
             catch (Exception e){
                 Log.ErrorLog(e.getMessage());}
         }
-        for(int i = 0; i< Properties.getN(); i++){
+        for(int i = 0; i< proiectdiz.Helpers.Properties.getN(); i++){
             requests[i].start();
 
         }

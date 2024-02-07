@@ -1,4 +1,4 @@
-package proiectdiz.Service;
+package proiectdiz.SenderServices;
 
 
 import proiectdiz.Config.WebClientConfig;
@@ -6,8 +6,7 @@ import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Log.Log;
 import proiectdiz.Model.DataFormat.SAE_Masters;
 import proiectdiz.Model.DataFormat.SAE_Slaves;
-import proiectdiz.Model.Properties;
-import proiectdiz.Sender.KeyRequestService;
+import proiectdiz.SenderServices.KeyRequestService;
 
 import java.util.Optional;
 import java.util.UUID;

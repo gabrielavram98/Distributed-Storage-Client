@@ -1,4 +1,4 @@
-package proiectdiz.Service;
+package proiectdiz.ShamirScheme;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

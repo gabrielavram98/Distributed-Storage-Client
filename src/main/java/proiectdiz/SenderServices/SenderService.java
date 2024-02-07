@@ -1,6 +1,6 @@
-package proiectdiz.Sender;
-import proiectdiz.Helpers.JsonHandler;
-import proiectdiz.Helpers.ValidationCheck;
+package proiectdiz.SenderServices;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,13 +21,18 @@ public class SenderService {
                 .build();
     }
 
-    public String sendJsonToReceiver(String jsonValue,String destination) {
+    public HttpStatusCode sendJsonToReceiver(String jsonValue,String destination) {
+            try{
+                return webClient.post().uri(destination)
+                    .body(BodyInserters.fromValue(jsonValue))
+                    .retrieve()
+                    .bodyToMono(HttpStatusCode.class)
+                    .block();
 
-          return webClient.post().uri(destination)
-                  .body(BodyInserters.fromValue(jsonValue))
-                  .retrieve()
-                  .bodyToMono(String.class)
-                  .block();
+            } catch (WebClientResponseException e) {
+
+                    return e.getStatusCode();
+            }
 
     }
 

@@ -1,4 +1,4 @@
-package proiectdiz.Model;
+package proiectdiz.Encrypt;
 
 public class QuantecKey {
     private String _keyId;
