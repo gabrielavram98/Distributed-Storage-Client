@@ -48,18 +48,22 @@ public class KeyHolder {
         KeyList.remove(key);
     }
 
-    public static String[] getKeysUUID() throws InterruptedException {
+    public static String[] getKeysUUID() throws Exception {
         //Map<Integer,String> keys= new HashMap<>();
         String[] guid= new String[proiectdiz.Helpers.Properties.getN()];
         KeyRequestor[] requests= new KeyRequestor[proiectdiz.Helpers.Properties.getN()];
+        try{
         for(int i = 0; i< proiectdiz.Helpers.Properties.getN(); i++) {
-            try{
+
                 guid[i]= UUID.randomUUID().toString();
-                KeyRequestor req= new KeyRequestor(guid[i],i);
+                KeyRequestor req= new KeyRequestor(guid[i],Integer.parseInt(Properties.getAvailableServers().get(i).substring(Properties.getAvailableServers().get(i).length()-1)));
                 requests[i]=req;
-            }
-            catch (Exception e){
-                Log.ErrorLog(e.getMessage());}
+
+         }
+        }
+        catch (Exception e){
+            Log.ErrorLog(e.getMessage());
+            throw new Exception(e.getMessage());
         }
         for(int i = 0; i< proiectdiz.Helpers.Properties.getN(); i++){
             requests[i].start();

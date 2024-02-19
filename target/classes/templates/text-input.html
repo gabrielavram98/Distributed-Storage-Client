@@ -8,7 +8,7 @@
    <style>
     .configuration {
       color: #4d86b8;
-      font-family: 'Trocchi', serif;
+      font-family: Neucha, serif;
       font-size: 38px;
       font-weight: normal;
       line-height: 48px;
@@ -84,7 +84,7 @@
     .upload-files-title {
       margin-top: 10px;
       color: #4d86b8;
-      font-family: 'Trocchi', serif;
+      font-family: 'Noto Sans', serif;
       font-size: 54px;
       font-weight: normal;
       line-height: 48px;
@@ -98,7 +98,7 @@
       box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
       color: #4d86b8;
       cursor: pointer;
-      font-family: Neucha, sans-serif;
+      font-family: Noto Sans, sans-serif;
       padding: .75rem;
       text-decoration: none;
       border-bottom-left-radius: 15px 255px;
@@ -159,12 +159,12 @@
             <label for="n">N:</label>
                 <select name="n" id="n">
         
-                    <option th:each="i : ${#numbers.sequence(3, 7)}" th:value="${i}" th:text="${i}"></option>
+                    <option th:each="i : ${#numbers.sequence(3, nr_of_servers)}" th:value="${i}" th:text="${i}"></option>
                 </select>
 
             <label for="l">L:</label>
                 <select name="l" id="l">
-                    <option th:each="i : ${#numbers.sequence(2, 7)}" th:value="${i}" th:text="${i}"></option>
+                    <option th:each="i : ${#numbers.sequence(2, nr_of_servers)}" th:value="${i}" th:text="${i}"></option>
                 </select>
         </div>
       

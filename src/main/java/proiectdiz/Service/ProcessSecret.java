@@ -75,7 +75,7 @@ public class ProcessSecret {
 
     }
 
-    public static void SendDownloadRequest(List<String> uuids) throws InterruptedException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public static void SendDownloadRequest(List<String> uuids) throws Exception {
         String request=JsonHandler.CreateDownloadRequest(uuids);
         String[] key_ids_UUID= KeyHolder.getKeysUUID();
         ShareJSON[] _sharesJSON= new ShareJSON[Properties.getN()];
@@ -85,6 +85,7 @@ public class ProcessSecret {
             String _encrypted_=_encryptor.Encrypt();
             ShareJSON sharejson= new ShareJSON(_encrypted_,key_.get_keyId(),_encryptor.getIV());
             _sharesJSON[i]=sharejson;
+
         }
         ShareManager.GetShares(_sharesJSON);
     }

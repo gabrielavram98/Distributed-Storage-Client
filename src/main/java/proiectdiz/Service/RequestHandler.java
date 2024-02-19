@@ -1,6 +1,10 @@
 package proiectdiz.Service;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
+import org.apache.catalina.Server;
+import org.apache.catalina.valves.HealthCheckValve;
 import proiectdiz.Database.DatabaseHandler;
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Helpers.PasswordGenerator;
@@ -45,7 +49,12 @@ public class RequestHandler {
         for(String uuid_elem:uuid_list){
             joiner.add(uuid_elem);
         }
-        List<String> param_list= List.of(uuid,MACAppender.HashPassword(Password),p.toString(),joiner.toString(),filename,String.valueOf(proiectdiz.Helpers.Properties.getN()),String.valueOf(proiectdiz.Helpers.Properties.getL()));
+        StringJoiner Server_joiner= new StringJoiner(",");
+        for(String server:Properties.getUsed_servers()){
+            Server_joiner.add(server);
+        }
+        Properties.getUsed_servers().clear();
+        List<String> param_list= List.of(uuid,MACAppender.HashPassword(Password),p.toString(),joiner.toString(),filename,String.valueOf(proiectdiz.Helpers.Properties.getN()),String.valueOf(proiectdiz.Helpers.Properties.getL()),Server_joiner.toString());
         DatabaseHandler db_handler= new DatabaseHandler(proiectdiz.Helpers.Properties.getUsername(), proiectdiz.Helpers.Properties.getPassword(), proiectdiz.Helpers.Properties.getConnectionString());
         db_handler.ExecuteStoredProcedure(proiectdiz.Helpers.Properties.getInsertProc(), param_list);
         ShareHolder.setFile_name(filename);
@@ -64,10 +73,11 @@ public class RequestHandler {
     public static void setFilename(String filename){
         RequestHandler.filename=filename;
     }
-    public static void HandleRequestForFileDownload(String requestBody){
+    public static void HandleRequestForFileDownload(String requestBody) throws Exception {
 
 
-        try{
+
+
             String uuid_from_file=requestBody.split("\n")[0].split(":")[1];
             String Password_from_file=requestBody.split("\n")[1].split(":")[1];
 
@@ -84,11 +94,23 @@ public class RequestHandler {
             String password_b64_hash= results.get("PASSWORD_b64_hash");
             proiectdiz.Helpers.Properties.setN(results.get("n"));
             proiectdiz.Helpers.Properties.setL(results.get("l"));
+            Properties.setUsed_servers(results.get("servers"));
+            int available_servers= HeathService.GetNumberOfUpServers();
+            Iterator<String> iterator= Properties.getUsed_servers().iterator();
+            while(iterator.hasNext()){
+                String server=iterator.next();
+                if(!Properties.available_servers.contains(server)){
+                    iterator.remove();
+                }
+             }
+            if(Properties.getUsed_servers().size()<Properties.getL()){
+                throw new Exception("Ne pare rau dar un număr prea mic de servere este disponibil pentru a putea reconstrui cheia dumneavoastră privată.");
+            }
 
             /////Verify password integrity
             String file_password_hash= MACAppender.HashPassword(Password_from_file);
             if(!file_password_hash.equals(password_b64_hash)){
-                throw new Exception("Password has been altered. Please provide the original password");
+                throw new Exception("Parola a fost modificată. Va rugam să utilizați parola originală.");
             }
             ShareHolder.setP(p);
             ShareHolder.setPassword(Password_from_file);
@@ -104,10 +126,10 @@ public class RequestHandler {
 
 
 
-        }
-        catch (Exception e){
-            Log.ErrorLog(e.getMessage());
-        }
+
+
+
+
 
 
     }
@@ -134,12 +156,12 @@ public class RequestHandler {
         if(!ValidationCheck.Validate(JsonHandler.StringToJson(share),"src\\main\\resources\\Share_format.json")){
             throw  new Exception("Error in Validating the request.Not valid Share format "+share);
         }
-       // synchronized (ShareHolder.getLock()) {
+        synchronized (ShareHolder.getLock()) {
             System.out.println("\n\nA INTRAT IN BLOCK\n\n");
             ShareHolder.addShare(share);
           ///  ShareHolder.getLock().notifyAll();
-      //  }
-      //  //ShareHolder.addShare(share);
+        }
+        //ShareHolder.addShare(share);
 
         if(ShareHolder.getSharesNumber()== proiectdiz.Helpers.Properties.getL()){
             synchronized (ShareHolder.getLock()) {

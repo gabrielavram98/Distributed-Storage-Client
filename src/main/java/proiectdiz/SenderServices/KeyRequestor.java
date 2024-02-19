@@ -32,7 +32,7 @@ public KeyRequestor(String uuid, int i){
             String json = node.toPrettyString();
 
 
-            String response=_keyRequestService.getKeys(json, "/" + SAE_Masters.values()[iterator] + "/" + "/api/v1/keys/" + SAE_Slaves.values()[iterator] + "/enc_keys");
+            String response=_keyRequestService.getKeys(json, "/" + SAE_Masters.values()[iterator-1] + "/" + "/api/v1/keys/" + SAE_Slaves.values()[iterator-1] + "/enc_keys");
 
 
         try {

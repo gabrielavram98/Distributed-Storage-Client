@@ -15,7 +15,8 @@ public class ShareManager {
             int n= Properties.getN();
             ShareSender[] senders= new ShareSender[n];
             for(int i=0;i<n;i++){
-                ShareSender sender= new ShareSender(shares[i],i,"/store");
+                ShareSender sender= new ShareSender(shares[i],i,"/store",Properties.getAvailableServers().get(i));
+                Properties.AddUsedServer(Properties.getAvailableServers().get(i));
                 senders[i]=sender;
             }
             for(int i=0;i<n;i++){
@@ -39,7 +40,7 @@ public class ShareManager {
             int n= Properties.getN();
             ShareSender[] senders= new ShareSender[n];
             for(int i=0;i<n;i++){
-                ShareSender sender= new ShareSender(request[i],i,"/get");
+                ShareSender sender= new ShareSender(request[i],i,"/get",Properties.getUsed_servers().get(i));
                 senders[i]=sender;
             }
             for(int i=0;i<n;i++){

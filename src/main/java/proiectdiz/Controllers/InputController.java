@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import proiectdiz.Log.Log;
 import proiectdiz.Helpers.Properties;
 import proiectdiz.Model.PropertiesApp;
+import proiectdiz.Service.HeathService;
 import proiectdiz.Service.RequestHandler;
 import proiectdiz.Model.ShareHolder;
 
@@ -31,7 +32,18 @@ public class InputController {
 
 
     @GetMapping("/text-input")
-    public String showTextInputForm() {
+    public String showTextInputForm(Model model) {
+        int servers= HeathService.GetNumberOfUpServers();
+        if(servers<3 && servers >0){
+            model.addAttribute("ErrorMessage","Ne pare rău dar un un număr prea mic de servere de stocare este disponibil momentan.Vă rugăm să reveniți!");
+            return "error";
+        }
+        if(servers<0){
+            model.addAttribute("ErrorMessage","Ne pare rău dar există o problemă de conexiune cu serverele de stocare.");
+            return "error";
+        }
+
+        model.addAttribute("nr_of_servers", servers);
         return "text-input";
     }
 
@@ -55,13 +67,14 @@ public class InputController {
                 //System.out.println(fileContent);
 
                 inputStream.close();
-                return "result";
+
 
             } catch (Exception e) {
                 Log.ErrorLog(e.getMessage());
                 model.addAttribute("ErrorMessage",e.getMessage());
                 return "error";
             }
+            return "result";
         } else {
             return "noFile";
         }
@@ -91,8 +104,18 @@ public class InputController {
     }
 
     @GetMapping("/uploadUUIDpage")
-    public String upleadUUIDpage(){
-        System.out.println("A intrat in /uploadUUIDPage");
+    public String uploadUUIDpage(Model model){
+
+        int servers= HeathService.GetNumberOfUpServers();
+        if(servers<2 && servers >0){
+            model.addAttribute("ErrorMessage","Ne pare rău dar un un număr prea mic de servere de stocare este disponibil momentan.Vă rugăm să reveniți!");
+            return "error";
+        }
+        if(servers<0){
+            model.addAttribute("ErrorMessage","Ne pare rău dar există o problemă de conexiune cu serverele de stocare.");
+            return "error";
+        }
+
         return "uploadUUIDPage";
     }
 
@@ -108,13 +131,14 @@ public class InputController {
                 RequestHandler.HandleRequestForFileDownload(fileContent);
 
                 inputStream.close();
-                return "redirect:download";
+
 
             } catch (Exception e) {
                 Log.ErrorLog(e.getMessage());
                 model.addAttribute("ErrorMessage",e.getMessage());
                 return "error";
             }
+            return "redirect:download";
         } else {
             return "noFile";
         }
@@ -130,13 +154,13 @@ public class InputController {
     @GetMapping("/downloadReconstructedFile")
     public ResponseEntity<byte[]> downloadReconstructedFileFunction( ) throws Exception {
         try{
-            System.out.println("A fost redirectionat in /downloadReconstructedFile");
-            synchronized (ShareHolder.getLock()) {
+
+           // synchronized (ShareHolder.getLock()) {
                if(!ShareHolder.isTaskCompleted()) {
                     System.out.println("SHARES NUMBER"+ShareHolder.getSharesNumber());
                     ShareHolder.getLock().wait();
                 }
-            }
+            //}
 
             Map<String,String> result = RequestHandler.Reconstruct();
 
@@ -152,6 +176,7 @@ public class InputController {
         }
 
     }
+
 
 
 
