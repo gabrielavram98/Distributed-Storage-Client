@@ -4,7 +4,7 @@ import proiectdiz.Helpers.Properties;
 import proiectdiz.Log.Log;
 
 public class HeathService {
-    private  static String apiUrl = "http://localhost:8081/api/server";
+    private  static String apiUrl = "http://localhost:443/api/server";
     public static int GetNumberOfUpServers(){
         int nr_of_servers = 0;
         try {

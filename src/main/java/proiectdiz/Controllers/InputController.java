@@ -176,6 +176,11 @@ public class InputController {
         }
 
     }
+    @GetMapping("/error")
+    public String error(){
+
+        return "error";
+    }
 
 
 
