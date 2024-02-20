@@ -1,8 +1,7 @@
-package proiectdiz.Service;
+package proiectdiz.Validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import proiectdiz.Helpers.PasswordGenerator;
-import proiectdiz.Request.Request;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -12,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
 
 public class MACAppender {
@@ -28,7 +26,7 @@ public class MACAppender {
 
     }
     private static String CreateMAC(String Request,SecretKey password) throws NoSuchAlgorithmException, InvalidKeyException {
-        //SecretKey password= PasswordGenerator.GeneratePassword();
+
         System.out.println("Password:"+ new BigInteger (password.getEncoded()) );
         byte[] keyBytes=password.getEncoded();
         String encodedkey= Base64.getEncoder().encodeToString(keyBytes);
@@ -38,9 +36,7 @@ public class MACAppender {
 
         byte[] keyBytes2 = Base64.getDecoder().decode(encodedkey);
         SecretKey secretKey = new SecretKeySpec(keyBytes2, 0, keyBytes2.length, "HmacSHA256");
-        //SecretKey secretKey = new SecretKeySpec(secretKeyString.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-       // JsonNode Data = Request.get("Data");
-       // JsonNode DataContent= Data.get("DataContent");
+
         Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(password);
         Mac mac2=Mac.getInstance("HmacSHA256");

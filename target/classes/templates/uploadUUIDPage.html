@@ -1,16 +1,128 @@
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
 
+        }
+
+        .form-container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 200px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin-top: 200px;
+
+        }
+
+        h1 {
+            color: #3498db;
+            font-family: Noto Sans, sans-serif;
+        }
+
+        textarea[name="userInput"] {
+            width: 17cm;
+            height: 12cm;
+            font-size: 16px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            resize: none;
+        }
+
+        .button-form {
+
+        }
+        .navbar {
+            background-color: #0c4182;
+            box-shadow: 33px 18px 28px rgba(95, 136, 168, 0.4);
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            top: 0;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #70a9de;
+            border-radius: 5px;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-family: Georgia, serif;
+            font-size: 20px;
+        }
+
+        .navbar a:hover {
+            background-color: #70a9de;
+            color: black;
+            border-radius: 5px;
+            font-family: Georgia, serif;
+            font-size: 20px;
+        }
+
+        .upload-files {
+
+            border-style: solid;
+            border-width: 2px;
+            box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
+            color: #4d86b8;
+            cursor: pointer;
+            font-family: Neucha, sans-serif;
+            padding: .75rem;
+            text-decoration: none;
+            border-bottom-left-radius: 15px 255px;
+            border-bottom-right-radius: 225px 15px;
+            border-top-left-radius: 255px 15px;
+            border-top-right-radius: 15px 225px;
+
+        }
+
+        .btn {
+            margin-top: 25px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #297fb8;
+        }
+
+    </style>
 </head>
 
 <body>
+<div class="navbar">
+    <a href="text-input">Upload key</a>
+    <a href="uploadUUIDpage">Download key</a>
+</div>
+<div class="form-container">
+    <form action="/uploadUUIDform" method="post" enctype="multipart/form-data">
+        <h1>Upload the metadata file of your stored file</h1>
+        <input type="file" name="fileInput" class="upload-files">
+        <div class="button-form">
+            <button type="submit" class="btn btn-primary">Download your file</button>
+        </div>
+    </form>
+</div>
 
-<form action="/uploadUUIDform" method="post" enctype="multipart/form-data">
-    <h1>Încărcați un fișier:</h1>
-    <input type="file" name="fileInput" class="mb-3">
-    <div class="button-form">
-        <button type="submit" class="btn btn-primary">Încărcați fișierul</button>
-    </div>
-</form>
 </body>
 </html>

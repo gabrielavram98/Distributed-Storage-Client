@@ -3,87 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Styled Form</title>
+    <title>Upload Page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f8f9fa;
-        }
+   <style>
+    .configuration {
+      color: #4d86b8;
+      font-family: Neucha, serif;
+      font-size: 38px;
+      font-weight: normal;
+      line-height: 48px;
+      margin: 25px;
+    }
 
-        .form-container {
-            text-align: center;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px; /* Add margin to separate the forms */
-        }
+    textarea[name="userInput"] {
+      width: 17cm;
+      height: 12cm;
+      font-size: 16px;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #05325e;
+      border-radius: 5px;
+      resize: none;
+    }
 
-        h1 {
-            color: #3498db;
-        }
+    .navbar {
+      background-color: #0c4182;
+      box-shadow: 33px 18px 28px rgba(95, 136, 168, 0.4);
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      top: 0;
+    }
 
-        textarea[name="userInput"] {
-            width: 17cm;
-            height: 12cm;
-            font-size: 16px;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            resize: none; /* Prevent resizing of the textarea */
-        }
+    .navbar a {
+      float: left;
+      display: block;
+      color: #70a9de;
+      border-radius: 5px;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-family: Georgia, serif;
+      font-size: 20px;
+    }
 
-        .button-form {
-            /* Add styling for the button container if needed */
-        }
-    </style>
+    .navbar a:hover {
+      background-color: #70a9de;
+      color: black;
+      border-radius: 5px;
+      font-family: Georgia, serif;
+      font-size: 20px;
+    }
+
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      border: 8px solid #3498db;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      max-width: 50%;
+      background-color: #fff;
+      /* Optional background color for the container */
+      box-shadow: 0 0 20px rgba(47, 119, 168, 0.4);
+      margin-top: 10%;
+    }
+
+    .form-container {
+      margin-top: 20px;
+    }
+
+    .upload-files-title {
+      margin-top: 10px;
+      color: #4d86b8;
+      font-family: 'Noto Sans', serif;
+      font-size: 54px;
+      font-weight: normal;
+      line-height: 48px;
+      margin-bottom: 3%;
+    }
+
+    .upload-files {
+
+      border-style: solid;
+      border-width: 2px;
+      box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
+      color: #4d86b8;
+      cursor: pointer;
+      font-family: Noto Sans, sans-serif;
+      padding: .75rem;
+      text-decoration: none;
+      border-bottom-left-radius: 15px 255px;
+      border-bottom-right-radius: 225px 15px;
+      border-top-left-radius: 255px 15px;
+      border-top-right-radius: 15px 225px;
+
+    }
+
+    .labels {
+        display: flex;
+        margin-left: 35%;
+    }
+
+    .labels label {
+        margin-right: 10px; 
+    }
+
+    .labels select {
+        width: 100px; 
+    }
+
+    .btn {
+      margin-top: 25px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #297fb8;
+    }
+  </style>
 </head>
 <body>
 
+  <div class="navbar">
+	<a href="text-input">Upload key</a>
+    <a href="uploadUUIDpage">Download key</a>
+   </div>
 <div class="container">
     <div class="form-container">
-        <h1>Introduceti textul:</h1>
-        <form action="/process-text" method="post" class="mb-3">
-            <textarea name="userInput"></textarea>
-            <div class="button-form">
-                <button type="submit" class="btn btn-primary">Procesează textul</button>
-            </div>
-        </form>
 
-        <!-- File Upload Form -->
-        <form action="/upload-file" method="post" enctype="multipart/form-data">
-            <h1>Încărcați un fișier:</h1>
-            <input type="file" name="fileInput" class="mb-3">
-            <div class="button-form">
-                <button type="submit" class="btn btn-primary">Încărcați fișierul</button>
-            </div>
-        </form>
 
-        <!-- Added Comboboxes for N and L -->
-        <form action="/your-action" method="post">
-            <h1>Configurații:</h1>
+
+       <form action="/upload-file" method="post" enctype="multipart/form-data">
+        <div class="upload-files-title">Upload your file</div>
+        <input type="file" name="fileInput" class="upload-files">
+        <div class="button-form-upload">
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </div>
+        <div class="configuration">Configurații:</div>
+        <div class="labels">
             <label for="n">N:</label>
-            <select name="n" id="n">
-                <!-- Thymeleaf expression to generate options from 2 to a value obtained from application.properties -->
-                <option th:each="i : ${#numbers.sequence(2, 7)}" th:value="${i}" th:text="${i}"></option>
-            </select>
+                <select name="n" id="n">
+        
+                    <option th:each="i : ${#numbers.sequence(3, nr_of_servers)}" th:value="${i}" th:text="${i}"></option>
+                </select>
 
             <label for="l">L:</label>
-            <select name="l" id="l">
-                <!-- Thymeleaf expression to generate options from 1 to the same value as N -->
-                <option th:each="i : ${#numbers.sequence(1, 7)}" th:value="${i}" th:text="${i}"></option>
-            </select>
+                <select name="l" id="l">
+                    <option th:each="i : ${#numbers.sequence(2, nr_of_servers)}" th:value="${i}" th:text="${i}"></option>
+                </select>
+        </div>
+      
+      </form>
 
-            <div class="button-form">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-        </form>
+
+
     </div>
 </div>
 

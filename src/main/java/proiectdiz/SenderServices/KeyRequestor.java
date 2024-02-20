@@ -1,4 +1,4 @@
-package proiectdiz.Service;
+package proiectdiz.SenderServices;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -6,13 +6,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import proiectdiz.Config.WebClientConfig;
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Helpers.ValidationCheck;
-import proiectdiz.Log.Log;
 import proiectdiz.Model.DataFormat.SAE_Masters;
 import proiectdiz.Model.DataFormat.SAE_Slaves;
-import proiectdiz.Model.Properties;
-import proiectdiz.Sender.KeyRequestService;
-
-import java.util.UUID;
+import proiectdiz.SenderServices.KeyRequestService;
 
 public class KeyRequestor extends Thread{
 private String key_uuid;
@@ -36,7 +32,7 @@ public KeyRequestor(String uuid, int i){
             String json = node.toPrettyString();
 
 
-            String response=_keyRequestService.getKeys(json, "/" + SAE_Masters.values()[iterator] + "/" + "/api/v1/keys/" + SAE_Slaves.values()[iterator] + "/enc_keys");
+            String response=_keyRequestService.getKeys(json, "/" + SAE_Masters.values()[iterator-1] + "/" + "/api/v1/keys/" + SAE_Slaves.values()[iterator-1] + "/enc_keys");
 
 
         try {

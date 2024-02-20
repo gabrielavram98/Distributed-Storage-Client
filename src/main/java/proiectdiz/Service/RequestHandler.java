@@ -1,20 +1,25 @@
-package proiectdiz.Model;
+package proiectdiz.Service;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.json.JSONArray;
-import org.springframework.http.HttpStatus;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
+import org.apache.catalina.Server;
+import org.apache.catalina.valves.HealthCheckValve;
 import proiectdiz.Database.DatabaseHandler;
 import proiectdiz.Helpers.JsonHandler;
 import proiectdiz.Helpers.PasswordGenerator;
+import proiectdiz.Helpers.Properties;
 import proiectdiz.Helpers.ValidationCheck;
 import proiectdiz.Log.Log;
-import proiectdiz.Service.*;
+import proiectdiz.Model.Share;
+import proiectdiz.Model.ShareHolder;
+import proiectdiz.ShamirScheme.Lagrange;
+import proiectdiz.Validation.BitOperator;
+import proiectdiz.Validation.MACAppender;
 
-import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.sql.ResultSet;
 import java.util.*;
 
 public class RequestHandler {
@@ -27,6 +32,9 @@ public class RequestHandler {
 
 
     public static void Handle(String requestBody, String filename) throws Exception {
+        try{
+
+
         if(!ValidationCheck.isValidAESKey(requestBody) && !ValidationCheck.isValidRSAkey(requestBody)){
             throw new Exception("Error in Validating the request.Not a valid key."+requestBody);
         }
@@ -41,11 +49,19 @@ public class RequestHandler {
         for(String uuid_elem:uuid_list){
             joiner.add(uuid_elem);
         }
-        List<String> param_list= List.of(uuid,MACAppender.HashPassword(Password),p.toString(),joiner.toString(),filename,String.valueOf(Properties.getN()),String.valueOf(Properties.getL()));
-        DatabaseHandler db_handler= new DatabaseHandler(Properties.getUsername(), Properties.getPassword(),Properties.getConnectionString());
-        db_handler.ExecuteStoredProcedure(Properties.getInsertProc(), param_list);
+        StringJoiner Server_joiner= new StringJoiner(",");
+        for(String server:Properties.getUsed_servers()){
+            Server_joiner.add(server);
+        }
+        Properties.getUsed_servers().clear();
+        List<String> param_list= List.of(uuid,MACAppender.HashPassword(Password),p.toString(),joiner.toString(),filename,String.valueOf(proiectdiz.Helpers.Properties.getN()),String.valueOf(proiectdiz.Helpers.Properties.getL()),Server_joiner.toString());
+        DatabaseHandler db_handler= new DatabaseHandler(proiectdiz.Helpers.Properties.getUsername(), proiectdiz.Helpers.Properties.getPassword(), proiectdiz.Helpers.Properties.getConnectionString());
+        db_handler.ExecuteStoredProcedure(proiectdiz.Helpers.Properties.getInsertProc(), param_list);
         ShareHolder.setFile_name(filename);
-
+        } catch (Exception e){
+            Log.ErrorLog(e.getMessage());
+            throw new Exception(e.getMessage());
+        }
 
 
 
@@ -57,10 +73,11 @@ public class RequestHandler {
     public static void setFilename(String filename){
         RequestHandler.filename=filename;
     }
-    public static void HandleRequestForFileDownload(String requestBody){
+    public static void HandleRequestForFileDownload(String requestBody) throws Exception {
 
 
-        try{
+
+
             String uuid_from_file=requestBody.split("\n")[0].split(":")[1];
             String Password_from_file=requestBody.split("\n")[1].split(":")[1];
 
@@ -70,18 +87,30 @@ public class RequestHandler {
             String UUID=uuid_from_file;
 
             //////get important data from database
-            DatabaseHandler db_handler= new DatabaseHandler(Properties.getUsername(), Properties.getPassword(),Properties.getConnectionString());
+            DatabaseHandler db_handler= new DatabaseHandler(proiectdiz.Helpers.Properties.getUsername(), proiectdiz.Helpers.Properties.getPassword(), proiectdiz.Helpers.Properties.getConnectionString());
             List<String> params= List.of(UUID);
-            Map<String,String>results= db_handler.ExecuteStoredProcedure(Properties.getReturnProc(),params);
+            Map<String,String>results= db_handler.ExecuteStoredProcedure(proiectdiz.Helpers.Properties.getReturnProc(),params);
             BigInteger p= new BigInteger(results.get("P"));
             String password_b64_hash= results.get("PASSWORD_b64_hash");
-            Properties.setN(results.get("n"));
-            Properties.setL(results.get("l"));
+            proiectdiz.Helpers.Properties.setN(results.get("n"));
+            proiectdiz.Helpers.Properties.setL(results.get("l"));
+            Properties.setUsed_servers(results.get("servers"));
+            int available_servers= HeathService.GetNumberOfUpServers();
+            Iterator<String> iterator= Properties.getUsed_servers().iterator();
+            while(iterator.hasNext()){
+                String server=iterator.next();
+                if(!Properties.available_servers.contains(server)){
+                    iterator.remove();
+                }
+             }
+            if(Properties.getUsed_servers().size()<Properties.getL()){
+                throw new Exception("Ne pare rau dar un număr prea mic de servere este disponibil pentru a putea reconstrui cheia dumneavoastră privată.");
+            }
 
             /////Verify password integrity
             String file_password_hash= MACAppender.HashPassword(Password_from_file);
             if(!file_password_hash.equals(password_b64_hash)){
-                throw new Exception("Password has been altered. Please provide the original password");
+                throw new Exception("Parola a fost modificată. Va rugam să utilizați parola originală.");
             }
             ShareHolder.setP(p);
             ShareHolder.setPassword(Password_from_file);
@@ -97,10 +126,10 @@ public class RequestHandler {
 
 
 
-        }
-        catch (Exception e){
-            Log.ErrorLog(e.getMessage());
-        }
+
+
+
+
 
 
     }
@@ -127,19 +156,27 @@ public class RequestHandler {
         if(!ValidationCheck.Validate(JsonHandler.StringToJson(share),"src\\main\\resources\\Share_format.json")){
             throw  new Exception("Error in Validating the request.Not valid Share format "+share);
         }
-        ShareHolder.addShare(share);
-        if(ShareHolder.getSharesNumber()==Properties.getL()){
+        synchronized (ShareHolder.getLock()) {
+            System.out.println("\n\nA INTRAT IN BLOCK\n\n");
+            ShareHolder.addShare(share);
+          ///  ShareHolder.getLock().notifyAll();
+        }
+        //ShareHolder.addShare(share);
+
+        if(ShareHolder.getSharesNumber()== proiectdiz.Helpers.Properties.getL()){
             synchronized (ShareHolder.getLock()) {
                 ShareHolder.setTaskCompleted();
                ShareHolder.getLock().notifyAll();
             }
+            //ShareHolder.setTaskUncompleted();
         }
 
     }
     public static Map<String,String> Reconstruct() throws Exception {
+
         List<String> encrypted_shares=ShareHolder.getShares();
         List<JsonNode> decrypted_shares= new ArrayList<>();
-
+        ShareHolder.setTaskUncompleted();
         for(int i=0;i<encrypted_shares.size();i++){
             decrypted_shares.add(ProcessSecret.DecryptShares(encrypted_shares.get(i)));
         }
@@ -147,7 +184,7 @@ public class RequestHandler {
         for(int i=0;i<decrypted_shares.get(0).get("Shares").size();i++){
             Share share= new Share();
 
-            for(int j=0;j<Properties.getL();j++){
+            for(int j = 0; j< proiectdiz.Helpers.Properties.getL(); j++){
                 String guid=decrypted_shares.get(j).get("Shares").get(i).get("GUID").asText();
                 if(share.getGUID()!=null)
                 {
@@ -168,7 +205,7 @@ public class RequestHandler {
         List<String> reconstructed_parts= new ArrayList<>();
 
         for(Share share:ShareObjects){
-            Lagrange lag= new Lagrange(share.getX().toArray(new BigInteger[0]), share.getY().toArray(new BigInteger[0]),ShareHolder.getP(),Properties.getL());
+            Lagrange lag= new Lagrange(share.getX().toArray(new BigInteger[0]), share.getY().toArray(new BigInteger[0]),ShareHolder.getP(), Properties.getL());
              BigInteger reconstructed=lag.lagrangeInterpolation();
 
                  //byte[] reconstructedBytes1=reconstructed.subtract(ShareHolder.getP()).toByteArray();

@@ -1,23 +1,19 @@
 package proiectdiz.Helpers;
-import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 //import org.json.JSONObject;
-import org.json.JSONArray;
 import proiectdiz.Log.Log;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import proiectdiz.Model.KeyHolder;
-import proiectdiz.Model.Properties;
-import proiectdiz.Model.QuantecKey;
-import proiectdiz.Service.Polynom;
+import proiectdiz.Encrypt.KeyHolder;
+import proiectdiz.Encrypt.QuantecKey;
+import proiectdiz.ShamirScheme.Polynom;
 
 public class JsonHandler {
 

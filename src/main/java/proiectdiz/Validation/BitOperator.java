@@ -1,4 +1,4 @@
-package proiectdiz.Service;
+package proiectdiz.Validation;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;

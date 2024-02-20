@@ -1,23 +1,47 @@
-package proiectdiz.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
+package proiectdiz.Helpers;
+import org.apache.catalina.User;
 import proiectdiz.Log.Log;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class Properties {
 
 
     public static String n;
-
+    public static List<String> available_servers= new ArrayList<>();
+    public static List<String> Used_servers= new ArrayList<>();
 
 
 
     public static String l;
+    public static void AddServers(String server){
+        available_servers.add(server);
+    }
+    public static void AddUsedServer(String server){
+        Used_servers.add(server);
+    }
+    public static void setUsed_servers(String servers){
+        String[] server_array= servers.split(",");
+
+
+        Used_servers = new ArrayList<>(Arrays.asList(server_array));
+    }
+    public static void removeUsedServer(String server){
+        Used_servers.remove(server);
+    }
+
+    public static List<String> getUsed_servers() {
+        return Used_servers;
+    }
+
+    public static List<String> getAvailableServers(){
+        return available_servers;
+    }
 
     private static final String CONFIG_FILE_PATH = "config.properties";
 

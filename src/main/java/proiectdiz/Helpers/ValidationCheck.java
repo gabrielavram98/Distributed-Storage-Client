@@ -61,9 +61,9 @@ public class ValidationCheck {
     }
 
     private static boolean isValidAESKeyLength(String hexKey) {
-        // Check if the length of the hexadecimal string corresponds to a valid AES key length
-        int byteLength = hexKey.length() / 2; // Each pair of hexadecimal characters represents a byte
-        return byteLength == 16 || byteLength == 24 || byteLength == 32; // 128, 192, or 256 bits
+
+        int byteLength = hexKey.length() / 2;
+        return byteLength == 16 || byteLength == 24 || byteLength == 32;
     }
 
     public static boolean isValidUUID(String input){

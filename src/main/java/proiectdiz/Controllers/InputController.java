@@ -1,9 +1,6 @@
 package proiectdiz.Controllers;
 
-import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,17 +10,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import proiectdiz.Log.Log;
-import proiectdiz.Model.Properties;
+import proiectdiz.Helpers.Properties;
 import proiectdiz.Model.PropertiesApp;
-import proiectdiz.Model.RequestHandler;
+import proiectdiz.Service.HeathService;
+import proiectdiz.Service.RequestHandler;
 import proiectdiz.Model.ShareHolder;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.concurrent.*;
 
 @Controller
 public class InputController {
@@ -32,22 +26,24 @@ public class InputController {
 
 
 
-    @PostMapping("/gatherShares")
-    public HttpStatus Receive_shares_from_servers(@RequestBody String shareBody){
-        try{
-            Log.TraceLog(shareBody);
-            RequestHandler.AddSharesToHolder(shareBody);
-            return HttpStatus.ACCEPTED;
-        }
-        catch(Exception e){
-            Log.ErrorLog(e.getMessage());
-            return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
 
-    }
+
+
+
 
     @GetMapping("/text-input")
-    public String showTextInputForm() {
+    public String showTextInputForm(Model model) {
+        int servers= HeathService.GetNumberOfUpServers();
+        if(servers<3 && servers >0){
+            model.addAttribute("ErrorMessage","Ne pare rău dar un un număr prea mic de servere de stocare este disponibil momentan.Vă rugăm să reveniți!");
+            return "error";
+        }
+        if(servers<0){
+            model.addAttribute("ErrorMessage","Ne pare rău dar există o problemă de conexiune cu serverele de stocare.");
+            return "error";
+        }
+
+        model.addAttribute("nr_of_servers", servers);
         return "text-input";
     }
 
@@ -71,13 +67,14 @@ public class InputController {
                 //System.out.println(fileContent);
 
                 inputStream.close();
-                return "result";
+
 
             } catch (Exception e) {
                 Log.ErrorLog(e.getMessage());
                 model.addAttribute("ErrorMessage",e.getMessage());
                 return "error";
             }
+            return "result";
         } else {
             return "noFile";
         }
@@ -90,19 +87,35 @@ public class InputController {
 
     @GetMapping("/downloadFile")
     public ResponseEntity<byte[]> generateAndDownloadFile( ) {
+        try{
+            String content = RequestHandler.returnData();
+            String filename = RequestHandler.returnFilenameUID();
 
-        String content = RequestHandler.returnData();
-        String filename = RequestHandler.returnFilenameUID();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", filename);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", filename);
+            return new ResponseEntity<>(content.getBytes(), headers, HttpStatus.OK);
+        }catch (Exception e){
+            Log.ErrorLog(e.getMessage());
+            return null;
+        }
 
-        return new ResponseEntity<>(content.getBytes(), headers, HttpStatus.OK);
     }
 
     @GetMapping("/uploadUUIDpage")
-    public String upleadUUIDpage(){
+    public String uploadUUIDpage(Model model){
+
+        int servers= HeathService.GetNumberOfUpServers();
+        if(servers<2 && servers >0){
+            model.addAttribute("ErrorMessage","Ne pare rău dar un un număr prea mic de servere de stocare este disponibil momentan.Vă rugăm să reveniți!");
+            return "error";
+        }
+        if(servers<0){
+            model.addAttribute("ErrorMessage","Ne pare rău dar există o problemă de conexiune cu serverele de stocare.");
+            return "error";
+        }
+
         return "uploadUUIDPage";
     }
 
@@ -110,7 +123,7 @@ public class InputController {
     public String uploadUUIDform(@RequestParam("fileInput") MultipartFile file, Model model){
         if (!file.isEmpty()) {
             try {
-
+                System.out.println("A intrat in /uploadUUIDForm");
                 InputStream inputStream = file.getInputStream();
                 byte[] fileBytes = inputStream.readAllBytes();
                 String fileContent = new String(fileBytes);
@@ -118,13 +131,14 @@ public class InputController {
                 RequestHandler.HandleRequestForFileDownload(fileContent);
 
                 inputStream.close();
-                return "redirect:download";
+
 
             } catch (Exception e) {
                 Log.ErrorLog(e.getMessage());
                 model.addAttribute("ErrorMessage",e.getMessage());
                 return "error";
             }
+            return "redirect:download";
         } else {
             return "noFile";
         }
@@ -133,27 +147,41 @@ public class InputController {
 
     @GetMapping("/download")
     public String download(){
+        System.out.println("A fost redirectionat in /download");
         return "resultFileBack";
     }
 
     @GetMapping("/downloadReconstructedFile")
-    public ResponseEntity<byte[]> downloadReconstructedFile( ) throws Exception {
+    public ResponseEntity<byte[]> downloadReconstructedFileFunction( ) throws Exception {
+        try{
 
-        synchronized (ShareHolder.getLock()) {
-            while (!ShareHolder.isTaskCompleted()) {
-                ShareHolder.getLock().wait();
-            }
+           // synchronized (ShareHolder.getLock()) {
+               if(!ShareHolder.isTaskCompleted()) {
+                    System.out.println("SHARES NUMBER"+ShareHolder.getSharesNumber());
+                    ShareHolder.getLock().wait();
+                }
+            //}
+
+            Map<String,String> result = RequestHandler.Reconstruct();
+
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", result.get("filename"));
+
+            return new ResponseEntity<>(result.get("Content").getBytes(), headers, HttpStatus.OK);
+        }catch (Exception e){
+            Log.ErrorLog(e.getMessage());
+            return null;
         }
 
-        Map<String,String> result = RequestHandler.Reconstruct();
-
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", result.get("filename"));
-
-        return new ResponseEntity<>(result.get("Content").getBytes(), headers, HttpStatus.OK);
     }
+    @GetMapping("/error")
+    public String error(){
+
+        return "error";
+    }
+
 
 
 

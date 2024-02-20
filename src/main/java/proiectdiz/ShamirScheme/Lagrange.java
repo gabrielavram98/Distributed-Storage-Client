@@ -1,4 +1,4 @@
-package proiectdiz.Service;
+package proiectdiz.ShamirScheme;
 //import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
 //import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 //import org.apache.commons.math3.analysis.solvers.PolynomialSolver;
