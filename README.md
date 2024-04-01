@@ -1,0 +1,1 @@
+Acest proiect reprezinta partea de client a proiectului DITRIBUTED STORAGE SYSTEM USING SHAMIR’S SECRET SHARING SCHEME AND QUANTUM KEY DISTRIBUTION.
